@@ -1,8 +1,6 @@
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useProStatus } from "@/hooks/use-pro-status";
-import { format, differenceInDays } from "date-fns";
 import { StreakCounter } from "@/components/dashboard/StreakCounter";
-import { HealingLevel } from "@/components/dashboard/HealingLevel";
 import { MoodTracker } from "@/components/dashboard/MoodTracker";
 import { DailyMissions } from "@/components/dashboard/DailyMissions";
 import { StopMeButton } from "@/components/dashboard/StopMeButton";
@@ -18,8 +16,6 @@ import { Link } from "wouter";
 export default function Dashboard() {
   const [ncDate] = useLocalStorage<string>("exdetox_nc_date", new Date().toISOString());
   const { isPro } = useProStatus();
-
-  const days = Math.max(0, differenceInDays(new Date(), new Date(ncDate)));
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto overflow-x-hidden space-y-8 scroll-smooth pb-24">
@@ -53,11 +49,6 @@ export default function Dashboard() {
 
       {/* Streak */}
       <StreakCounter ncDate={ncDate} />
-
-      {/* Level */}
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
-        <HealingLevel days={days} />
-      </motion.div>
 
       {/* Rotating Quote */}
       <motion.div
