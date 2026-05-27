@@ -10,6 +10,7 @@ import Settings from "@/pages/settings";
 import Journal from "@/pages/journal";
 import Analytics from "@/pages/analytics";
 import Upgrade from "@/pages/upgrade";
+import Situationship from "@/pages/situationship";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useEffect } from "react";
 
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/journal" component={Journal} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/upgrade" component={Upgrade} />
+      <Route path="/situationship" component={Situationship} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>

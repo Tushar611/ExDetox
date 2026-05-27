@@ -9,6 +9,7 @@ import { StopMeButton } from "@/components/dashboard/StopMeButton";
 import { RelapseButton } from "@/components/dashboard/RelapseButton";
 import { HealingPlaylist } from "@/components/dashboard/HealingPlaylist";
 import { CustomPledge } from "@/components/dashboard/CustomPledge";
+import { SituationshipCard } from "@/components/dashboard/SituationshipCard";
 import { getDailyQuote } from "@/lib/data";
 import { motion } from "framer-motion";
 import { Crown } from "lucide-react";
@@ -87,6 +88,11 @@ export default function Dashboard() {
       {/* Missions */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
         <DailyMissions />
+      </motion.div>
+
+      {/* Situationship Mode */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42 }}>
+        <SituationshipCard />
       </motion.div>
 
       {/* Healing Playlist (Pro) */}

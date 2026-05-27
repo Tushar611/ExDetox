@@ -4,7 +4,7 @@ import { useProStatus } from "@/hooks/use-pro-status";
 import { useLocation } from "wouter";
 import {
   Crown, Check, Zap, BookOpen, BarChart2, Music2,
-  Target, ChevronLeft, Sparkles, Shield, X
+  Target, ChevronLeft, Sparkles, Shield, X, Ghost
 } from "lucide-react";
 
 const FREE_FEATURES = [
@@ -19,6 +19,7 @@ const FREE_FEATURES = [
 ];
 
 const PRO_FEATURES = [
+  { icon: Ghost, label: "Situationship Mode", desc: "Clarity streak, red flag log & unsent letter" },
   { icon: BookOpen, label: "Glow Up Journal", desc: "Daily private entries tracking your growth" },
   { icon: BarChart2, label: "Mood Analytics", desc: "7-day & 30-day mood trends + streak history" },
   { icon: Music2, label: "Healing Playlist", desc: "Mood-matched song recommendations" },
