@@ -9,6 +9,7 @@ import { HealingPlaylist } from "@/components/dashboard/HealingPlaylist";
 import { CustomPledge } from "@/components/dashboard/CustomPledge";
 import { SituationshipCard } from "@/components/dashboard/SituationshipCard";
 import { RotatingQuote } from "@/components/dashboard/RotatingQuote";
+import { ProFeaturesRow } from "@/components/dashboard/ProFeaturesRow";
 import { motion } from "framer-motion";
 import { Crown } from "lucide-react";
 import { Link } from "wouter";
@@ -72,6 +73,11 @@ export default function Dashboard() {
       {/* Missions */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
         <DailyMissions />
+      </motion.div>
+
+      {/* Healing Tools (Pro) */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
+        <ProFeaturesRow />
       </motion.div>
 
       {/* Situationship Mode */}

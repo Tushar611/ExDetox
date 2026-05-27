@@ -11,6 +11,9 @@ import Journal from "@/pages/journal";
 import Analytics from "@/pages/analytics";
 import Upgrade from "@/pages/upgrade";
 import Situationship from "@/pages/situationship";
+import ExAnalysis from "@/pages/ex-analysis";
+import ShadowWork from "@/pages/shadow-work";
+import AttachmentQuiz from "@/pages/attachment-quiz";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useEffect } from "react";
 
@@ -37,6 +40,9 @@ function Router() {
       <Route path="/analytics" component={Analytics} />
       <Route path="/upgrade" component={Upgrade} />
       <Route path="/situationship" component={Situationship} />
+      <Route path="/ex-analysis" component={ExAnalysis} />
+      <Route path="/shadow-work" component={ShadowWork} />
+      <Route path="/attachment-quiz" component={AttachmentQuiz} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>

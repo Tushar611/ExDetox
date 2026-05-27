@@ -4,7 +4,7 @@ import { useProStatus } from "@/hooks/use-pro-status";
 import { useLocation } from "wouter";
 import {
   Crown, Check, Zap, BookOpen, BarChart2, Music2,
-  Target, ChevronLeft, Sparkles, Shield, X, Ghost
+  Target, ChevronLeft, Sparkles, Shield, X, Ghost, Brain, Heart, Moon
 } from "lucide-react";
 
 const FREE_FEATURES = [
@@ -19,6 +19,9 @@ const FREE_FEATURES = [
 ];
 
 const PRO_FEATURES = [
+  { icon: Brain, label: "Ex Analysis", desc: "8-question deep dive into your relationship dynamic" },
+  { icon: Heart, label: "Attachment Style Quiz", desc: "Discover your attachment pattern & growth edge" },
+  { icon: Moon, label: "Shadow Work Prompts", desc: "30 deep reflective prompts to heal at the root" },
   { icon: Ghost, label: "Situationship Mode", desc: "Clarity streak, red flag log & unsent letter" },
   { icon: BookOpen, label: "Glow Up Journal", desc: "Daily private entries tracking your growth" },
   { icon: BarChart2, label: "Mood Analytics", desc: "7-day & 30-day mood trends + streak history" },
