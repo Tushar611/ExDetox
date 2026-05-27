@@ -118,7 +118,7 @@ export const getDailyQuote = (dateString: string) => {
   return QUOTES[index];
 };
 
-export const getDailyMissions = (dateString: string) => {
+export const getDailyMissions = (dateString: string, count = 3) => {
   let hash = 0;
   for (let i = 0; i < dateString.length; i++) {
     hash = (hash << 5) - hash + dateString.charCodeAt(i);
@@ -126,12 +126,13 @@ export const getDailyMissions = (dateString: string) => {
   }
   const result = [];
   const available = [...MISSIONS];
-  
-  for(let i = 0; i < 3; i++) {
+  const limit = Math.min(count, available.length);
+
+  for (let i = 0; i < limit; i++) {
     const nextHash = Math.abs(hash + i * 31) % available.length;
     result.push(available[nextHash]);
     available.splice(nextHash, 1);
   }
-  
+
   return result;
 };

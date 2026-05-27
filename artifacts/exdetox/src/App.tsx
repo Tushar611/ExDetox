@@ -7,6 +7,9 @@ import Onboarding from "@/pages/onboarding";
 import Dashboard from "@/pages/dashboard";
 import Quiz from "@/pages/quiz";
 import Settings from "@/pages/settings";
+import Journal from "@/pages/journal";
+import Analytics from "@/pages/analytics";
+import Upgrade from "@/pages/upgrade";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useEffect } from "react";
 
@@ -28,6 +31,9 @@ function Router() {
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/quiz" component={Quiz} />
+      <Route path="/journal" component={Journal} />
+      <Route path="/analytics" component={Analytics} />
+      <Route path="/upgrade" component={Upgrade} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
