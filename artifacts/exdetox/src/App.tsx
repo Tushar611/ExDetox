@@ -19,7 +19,8 @@ function Router() {
   const [started] = useLocalStorage("exdetox_started", false);
 
   useEffect(() => {
-    if (!started && location !== "/" && location !== "/onboarding") {
+    const publicRoutes = ["/", "/onboarding", "/upgrade"];
+    if (!started && !publicRoutes.includes(location)) {
       setLocation("/onboarding");
     } else if (started && (location === "/" || location === "/onboarding")) {
       setLocation("/dashboard");

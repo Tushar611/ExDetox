@@ -10,7 +10,7 @@ import { RelapseButton } from "@/components/dashboard/RelapseButton";
 import { HealingPlaylist } from "@/components/dashboard/HealingPlaylist";
 import { CustomPledge } from "@/components/dashboard/CustomPledge";
 import { SituationshipCard } from "@/components/dashboard/SituationshipCard";
-import { getDailyQuote } from "@/lib/data";
+import { RotatingQuote } from "@/components/dashboard/RotatingQuote";
 import { motion } from "framer-motion";
 import { Crown } from "lucide-react";
 import { Link } from "wouter";
@@ -19,8 +19,6 @@ export default function Dashboard() {
   const [ncDate] = useLocalStorage<string>("exdetox_nc_date", new Date().toISOString());
   const { isPro } = useProStatus();
 
-  const today = format(new Date(), "yyyy-MM-dd");
-  const dailyQuote = getDailyQuote(today);
   const days = Math.max(0, differenceInDays(new Date(), new Date(ncDate)));
 
   return (
@@ -61,18 +59,13 @@ export default function Dashboard() {
         <HealingLevel days={days} />
       </motion.div>
 
-      {/* Quote */}
+      {/* Rotating Quote */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="py-6 px-4 border-y border-border/40 text-center relative"
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-        <p className="text-lg font-serif italic text-foreground/90 leading-relaxed">
-          "{dailyQuote}"
-        </p>
+        <RotatingQuote />
       </motion.div>
 
       {/* Custom Pledge (Pro) */}

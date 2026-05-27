@@ -18,7 +18,27 @@ export const QUOTES = [
   "Focus on your goals, not your ghosts.",
   "Don't lose yourself trying to fix them.",
   "Peace is better than attention.",
-  "They are a lesson, not a life sentence."
+  "They are a lesson, not a life sentence.",
+  "Unbothered is the highest level you can reach.",
+  "Your healing is not a slow process. It's a brave one.",
+  "You deserve a love that doesn't make you question your worth.",
+  "Stop being available for people who ghost you.",
+  "Being alone is better than being chosen only sometimes.",
+  "They lost someone who actually cared. You lost someone who didn't.",
+  "You didn't fail. You learned what you'll never accept again.",
+  "The version of them you loved might not even exist anymore.",
+  "It's not love if it only shows up when it's convenient.",
+  "Your standards aren't too high. Their effort was just too low.",
+  "Stop shrinking yourself to fit someone who doesn't deserve your full size.",
+  "One day you'll laugh at how much you cried over this.",
+  "You can miss someone and still know they weren't good for you.",
+  "The right person won't make you feel like a backup plan.",
+  "Detachment is a superpower. Start practicing it.",
+  "Your peace is more valuable than any relationship.",
+  "They left and the sun still rose. That's your sign.",
+  "You're not hard to love. They were just scared of real love.",
+  "Healing isn't linear. Bad days don't mean you're starting over.",
+  "Every day of no contact is a vote for your future self."
 ];
 
 export const MISSIONS = [
