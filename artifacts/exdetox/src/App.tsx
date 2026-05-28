@@ -16,11 +16,25 @@ import ExAnalysis from "@/pages/ex-analysis";
 import ShadowWork from "@/pages/shadow-work";
 import AttachmentQuiz from "@/pages/attachment-quiz";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { getReferralFromUrl, activateReferralTrial, hasUsedReferral, incrementReferralCount } from "@/lib/referral";
 import { useEffect } from "react";
 
 function Router() {
   const [location, setLocation] = useLocation();
   const [started] = useLocalStorage("exdetox_started", false);
+
+  useEffect(() => {
+    // Activate referral trial if ?ref= param is present and not already used
+    const refCode = getReferralFromUrl();
+    if (refCode && !hasUsedReferral()) {
+      activateReferralTrial();
+      incrementReferralCount();
+      // Strip the param from URL without a page reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete("ref");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
 
   useEffect(() => {
     const publicRoutes = ["/", "/onboarding", "/upgrade"];

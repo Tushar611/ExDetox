@@ -1,5 +1,6 @@
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useProStatus } from "@/hooks/use-pro-status";
+import { Clock } from "lucide-react";
 import { StreakCounter } from "@/components/dashboard/StreakCounter";
 import { MoodTracker } from "@/components/dashboard/MoodTracker";
 import { DailyMissions } from "@/components/dashboard/DailyMissions";
@@ -16,7 +17,7 @@ import { Link } from "wouter";
 
 export default function Dashboard() {
   const [ncDate] = useLocalStorage<string>("exdetox_nc_date", new Date().toISOString());
-  const { isPro } = useProStatus();
+  const { isPro, trialActive, trialDaysLeft } = useProStatus();
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto overflow-x-hidden space-y-8 scroll-smooth pb-24">
@@ -47,6 +48,19 @@ export default function Dashboard() {
           </div>
         )}
       </motion.div>
+
+      {/* Trial banner */}
+      {trialActive && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/25 text-xs font-semibold"
+        >
+          <Clock size={13} className="text-primary flex-shrink-0" />
+          <span className="text-primary">Pro Trial active — <span className="font-black">{trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} left</span></span>
+          <Link href="/upgrade" className="ml-auto text-primary/70 hover:text-primary underline transition-colors">Upgrade</Link>
+        </motion.div>
+      )}
 
       {/* Streak */}
       <StreakCounter ncDate={ncDate} />
