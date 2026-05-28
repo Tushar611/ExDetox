@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { AppLayout } from "@/components/layout/AppLayout";
+import Landing from "@/pages/landing";
 import Onboarding from "@/pages/onboarding";
 import Dashboard from "@/pages/dashboard";
 import Quiz from "@/pages/quiz";
@@ -25,14 +26,14 @@ function Router() {
     const publicRoutes = ["/", "/onboarding", "/upgrade"];
     if (!started && !publicRoutes.includes(location)) {
       setLocation("/onboarding");
-    } else if (started && (location === "/" || location === "/onboarding")) {
+    } else if (started && location === "/onboarding") {
       setLocation("/dashboard");
     }
   }, [started, location, setLocation]);
 
   return (
     <Switch>
-      <Route path="/" component={Onboarding} />
+      <Route path="/" component={Landing} />
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/quiz" component={Quiz} />
