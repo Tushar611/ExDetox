@@ -15,6 +15,7 @@ import Situationship from "@/pages/situationship";
 import ExAnalysis from "@/pages/ex-analysis";
 import ShadowWork from "@/pages/shadow-work";
 import AttachmentQuiz from "@/pages/attachment-quiz";
+import HealingCard from "@/pages/healing-card";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { getReferralFromUrl, activateReferralTrial, hasUsedReferral, incrementReferralCount } from "@/lib/referral";
 import { useEffect } from "react";
@@ -58,6 +59,7 @@ function Router() {
       <Route path="/ex-analysis" component={ExAnalysis} />
       <Route path="/shadow-work" component={ShadowWork} />
       <Route path="/attachment-quiz" component={AttachmentQuiz} />
+      <Route path="/healing-card" component={HealingCard} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>

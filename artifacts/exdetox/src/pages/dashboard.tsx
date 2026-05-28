@@ -12,7 +12,7 @@ import { SituationshipCard } from "@/components/dashboard/SituationshipCard";
 import { RotatingQuote } from "@/components/dashboard/RotatingQuote";
 import { ProFeaturesRow } from "@/components/dashboard/ProFeaturesRow";
 import { motion } from "framer-motion";
-import { Crown } from "lucide-react";
+import { Crown, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Dashboard() {
@@ -102,6 +102,26 @@ export default function Dashboard() {
       {/* Healing Playlist (Pro) */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
         <HealingPlaylist />
+      </motion.div>
+
+      {/* Share Progress Card */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.48 }}>
+        <Link href="/healing-card">
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            data-testid="card-healing-card-link"
+            className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/5 border border-primary/20 cursor-pointer hover:border-primary/40 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
+              <Sparkles size={18} className="text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-sm">Share Your Progress</p>
+              <p className="text-xs text-muted-foreground">Create a card for Instagram Stories</p>
+            </div>
+            <span className="text-primary text-lg">→</span>
+          </motion.div>
+        </Link>
       </motion.div>
 
       {/* Actions */}
