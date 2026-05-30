@@ -16,6 +16,8 @@ import ExAnalysis from "@/pages/ex-analysis";
 import ShadowWork from "@/pages/shadow-work";
 import AttachmentQuiz from "@/pages/attachment-quiz";
 import HealingCard from "@/pages/healing-card";
+import Auth from "@/pages/auth";
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { getReferralFromUrl, activateReferralTrial, hasUsedReferral, incrementReferralCount } from "@/lib/referral";
 import { useEffect } from "react";
@@ -23,14 +25,13 @@ import { useEffect } from "react";
 function Router() {
   const [location, setLocation] = useLocation();
   const [started] = useLocalStorage("exdetox_started", false);
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    // Activate referral trial if ?ref= param is present and not already used
     const refCode = getReferralFromUrl();
     if (refCode && !hasUsedReferral()) {
       activateReferralTrial();
       incrementReferralCount();
-      // Strip the param from URL without a page reload
       const url = new URL(window.location.href);
       url.searchParams.delete("ref");
       window.history.replaceState({}, "", url.toString());
@@ -38,17 +39,47 @@ function Router() {
   }, []);
 
   useEffect(() => {
-    const publicRoutes = ["/", "/onboarding", "/upgrade"];
-    if (!started && !publicRoutes.includes(location)) {
-      setLocation("/onboarding");
-    } else if (started && location === "/onboarding") {
-      setLocation("/dashboard");
+    if (loading) return;
+
+    const publicRoutes = ["/", "/auth", "/upgrade"];
+
+    // Not logged in → send to /auth (except public routes)
+    if (!user && !publicRoutes.includes(location)) {
+      setLocation("/auth");
+      return;
     }
-  }, [started, location, setLocation]);
+
+    // Logged in, not started → onboarding
+    if (user && !started && location !== "/onboarding" && !publicRoutes.includes(location)) {
+      setLocation("/onboarding");
+      return;
+    }
+
+    // Logged in, started, on onboarding → dashboard
+    if (user && started && location === "/onboarding") {
+      setLocation("/dashboard");
+      return;
+    }
+
+    // Logged in, on /auth → dashboard
+    if (user && location === "/auth") {
+      setLocation(started ? "/dashboard" : "/onboarding");
+      return;
+    }
+  }, [user, loading, started, location, setLocation]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <Switch>
       <Route path="/" component={Landing} />
+      <Route path="/auth" component={Auth} />
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/quiz" component={Quiz} />
@@ -68,14 +99,16 @@ function Router() {
 
 function App() {
   return (
-    <TooltipProvider>
-      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-        <AppLayout>
-          <Router />
-        </AppLayout>
-      </WouterRouter>
-      <Toaster />
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <AppLayout>
+            <Router />
+          </AppLayout>
+        </WouterRouter>
+        <Toaster />
+      </TooltipProvider>
+    </AuthProvider>
   );
 }
 
