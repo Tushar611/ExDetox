@@ -1,10 +1,9 @@
 import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { signInWithGoogle, signInWithEmail, signUpWithEmail, getGoogleRedirectResult } from "@/lib/auth";
+import { signInWithGoogle, signInWithEmail, signUpWithEmail } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/auth-context";
 import { firebaseConfigured, missingFirebaseEnv } from "@/lib/firebase";
-import { useLocalStorage } from "@/hooks/use-local-storage";
 
 const HEADLINES = [
   "You stopped crying. Now stop checking.",
@@ -69,30 +68,12 @@ export default function Auth() {
   const [isSignup, setIsSignup] = useState(false);
   const [, setLocation] = useLocation();
   const { user } = useAuth();
-  const [started] = useLocalStorage("exdetox_started", false);
 
   const isMobile = typeof navigator !== "undefined" && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   useEffect(() => {
     if (user) setLocation("/dashboard");
   }, [user, setLocation]);
-
-  useEffect(() => {
-    const loadRedirectResult = async () => {
-      try {
-        const redirectUser = await getGoogleRedirectResult();
-        if (redirectUser) {
-          setLocation(started ? "/dashboard" : "/onboarding");
-          return;
-        }
-      } catch (error: unknown) {
-        setError(getFirebaseErrorMessage(error, isMobile));
-        setLoading(false);
-      }
-    };
-
-    loadRedirectResult();
-  }, [isMobile, setLocation, started]);
 
   useEffect(() => {
     if (!firebaseConfigured && missingFirebaseEnv.length > 0) {

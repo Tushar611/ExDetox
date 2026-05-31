@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User } from "firebase/auth";
-import { onAuthChange } from "@/lib/auth";
+import { getGoogleRedirectResult, onAuthChange } from "@/lib/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -14,11 +14,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthChange((u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return unsub;
+    let active = true;
+    let unsubscribe = () => {};
+
+    const bootstrapAuth = async () => {
+      try {
+        await getGoogleRedirectResult();
+      } catch {
+        // Auth page surfaces user-facing errors; the provider just waits for Firebase to settle.
+      }
+
+      if (!active) return;
+
+      unsubscribe = onAuthChange((u) => {
+        if (!active) return;
+        setUser(u);
+        setLoading(false);
+      });
+    };
+
+    bootstrapAuth();
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
   return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
