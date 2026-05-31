@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { signInWithGoogle, signInWithEmail, signUpWithEmail, getGoogleRedirectResult } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/auth-context";
+import { firebaseConfigured, missingFirebaseEnv } from "@/lib/firebase";
 
 const HEADLINES = [
   "You stopped crying. Now stop checking.",
@@ -17,6 +18,46 @@ const STATS = [
   { value: "89%", label: "didn't relapse after 7 days" },
   { value: "Day 1", label: "is where power begins" },
 ];
+
+function getFirebaseErrorMessage(error: unknown, isMobile: boolean) {
+  const fallback = "Sign-in failed. Please try again.";
+  if (!error || typeof error !== "object") return fallback;
+
+  const maybeError = error as { code?: string; message?: string };
+  const code = maybeError.code ?? "";
+
+  switch (code) {
+    case "auth/popup-closed-by-user":
+      return "The Google sign-in popup was closed before it finished.";
+    case "auth/popup-blocked":
+      return "Your browser blocked the Google sign-in popup. Allow popups and try again.";
+    case "auth/unauthorized-domain":
+      return isMobile
+        ? "Firebase is rejecting this mobile domain. Use a deployed HTTPS URL and add it in Firebase Authentication -> Settings -> Authorized domains."
+        : "Firebase is rejecting this domain. Add `localhost` to Firebase Authentication -> Settings -> Authorized domains.";
+    case "auth/operation-not-allowed":
+      return "This sign-in method is disabled in Firebase. Enable Google and Email/Password in Firebase Authentication -> Sign-in method.";
+    case "auth/invalid-credential":
+      return "That email or password is incorrect.";
+    case "auth/user-not-found":
+      return "No account exists for that email yet.";
+    case "auth/wrong-password":
+      return "That password is incorrect.";
+    case "auth/email-already-in-use":
+      return "That email is already being used. Try signing in instead.";
+    case "auth/weak-password":
+      return "Use a stronger password with at least 6 characters.";
+    case "auth/invalid-email":
+      return "Enter a valid email address.";
+    case "auth/network-request-failed":
+      return "Network error while contacting Firebase. Check your connection and try again.";
+    default:
+      if (maybeError.message?.includes("auth/")) {
+        return maybeError.message.replace("Firebase: ", "").replace(/\(auth\/([^)]+)\)\.?/, "$1");
+      }
+      return fallback;
+  }
+}
 
 export default function Auth() {
   const [headlineIdx, setHeadlineIdx] = useState(0);
@@ -38,12 +79,21 @@ export default function Auth() {
     const loadRedirectResult = async () => {
       try {
         await getGoogleRedirectResult();
-      } catch {
-        // Ignore redirect result errors; auth state will update if login succeeded.
+      } catch (error: unknown) {
+        setError(getFirebaseErrorMessage(error, isMobile));
+        setLoading(false);
       }
     };
 
     loadRedirectResult();
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!firebaseConfigured && missingFirebaseEnv.length > 0) {
+      setError(
+        `Firebase config is missing for this build: ${missingFirebaseEnv.join(", ")}. Add these in Vercel Project Settings -> Environment Variables and redeploy.`,
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -54,21 +104,36 @@ export default function Auth() {
   }, []);
 
   const handleGoogle = async () => {
+    if (!firebaseConfigured) {
+      setError("Firebase is not configured in this app yet. Check the `VITE_FIREBASE_*` values in `artifacts/exdetox/.env`.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     try {
       await signInWithGoogle(isMobile);
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Sign-in failed";
-      if (!isMobile && (msg.includes("popup-closed") || msg.includes("popup-blocked") || msg.includes("operation-not-supported-in-this-environment"))) {
+    } catch (error: unknown) {
+      const maybeError = error as { code?: string; message?: string };
+      const shouldFallbackToRedirect =
+        !isMobile &&
+        (
+          maybeError.code === "auth/popup-blocked" ||
+          maybeError.code === "auth/cancelled-popup-request" ||
+          maybeError.code === "auth/operation-not-supported-in-this-environment" ||
+          maybeError.message?.includes("popup-blocked") ||
+          maybeError.message?.includes("operation-not-supported-in-this-environment")
+        );
+
+      if (shouldFallbackToRedirect) {
         try {
           await signInWithGoogle(true);
           return;
-        } catch {
-          setError("Sign-in failed. Please try again.");
+        } catch (redirectError: unknown) {
+          setError(getFirebaseErrorMessage(redirectError, isMobile));
         }
       } else {
-        setError("Sign-in failed. Please try again.");
+        setError(getFirebaseErrorMessage(error, isMobile));
       }
     } finally {
       if (!isMobile) {
@@ -88,15 +153,20 @@ export default function Auth() {
       return;
     }
 
+    if (!firebaseConfigured) {
+      setError("Firebase is not configured in this app yet. Check the `VITE_FIREBASE_*` values in `artifacts/exdetox/.env`.");
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isSignup) {
         await signUpWithEmail(email, password);
       } else {
         await signInWithEmail(email, password);
       }
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Authentication failed";
-      setError(msg.includes("auth/") ? msg.replace("Firebase: ", "") : "Unable to sign in. Please check your credentials.");
+    } catch (error: unknown) {
+      setError(getFirebaseErrorMessage(error, isMobile));
     } finally {
       setLoading(false);
     }
@@ -346,6 +416,9 @@ export default function Auth() {
 
           <p className="text-xs text-slate-600 text-center leading-relaxed">
             By continuing, you agree to our terms. Your data stays private and is never sold.
+          </p>
+          <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+            Google sign-in on phones usually needs a deployed HTTPS domain added to Firebase Authorized domains. `localhost` works for laptop testing, but mobile testing over a local IP often gets rejected by Firebase.
           </p>
         </motion.div>
       </div>
