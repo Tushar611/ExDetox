@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { signInWithGoogle, signInWithEmail, signUpWithEmail } from "@/lib/auth";
+import { signInWithGoogle, signInWithEmail, signUpWithEmail, getGoogleRedirectResult } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -28,9 +28,23 @@ export default function Auth() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
 
+  const isMobile = typeof navigator !== "undefined" && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
   useEffect(() => {
     if (user) setLocation("/dashboard");
   }, [user, setLocation]);
+
+  useEffect(() => {
+    const loadRedirectResult = async () => {
+      try {
+        await getGoogleRedirectResult();
+      } catch {
+        // Ignore redirect result errors; auth state will update if login succeeded.
+      }
+    };
+
+    loadRedirectResult();
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -43,12 +57,23 @@ export default function Auth() {
     setLoading(true);
     setError("");
     try {
-      await signInWithGoogle();
+      await signInWithGoogle(isMobile);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Sign-in failed";
-      if (!msg.includes("popup-closed")) setError("Sign-in failed. Please try again.");
+      if (!isMobile && (msg.includes("popup-closed") || msg.includes("popup-blocked") || msg.includes("operation-not-supported-in-this-environment"))) {
+        try {
+          await signInWithGoogle(true);
+          return;
+        } catch {
+          setError("Sign-in failed. Please try again.");
+        }
+      } else {
+        setError("Sign-in failed. Please try again.");
+      }
     } finally {
-      setLoading(false);
+      if (!isMobile) {
+        setLoading(false);
+      }
     }
   };
 
@@ -267,8 +292,8 @@ export default function Auth() {
           className="w-full flex flex-col gap-3"
         >
           <motion.button
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: 1.02 }}
+            whileTap={!loading ? { scale: 0.97 } : undefined}
+            whileHover={!loading ? { scale: 1.02 } : undefined}
             onClick={handleGoogle}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-base transition-all relative overflow-hidden"
@@ -310,6 +335,13 @@ export default function Auth() {
           {error && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="text-sm text-red-400 text-center">{error}</motion.p>
+          )}
+
+          {loading && isMobile && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              className="text-xs text-slate-400 text-center italic">
+              Opening your browser to sign in...
+            </motion.p>
           )}
 
           <p className="text-xs text-slate-600 text-center leading-relaxed">
