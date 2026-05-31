@@ -4,6 +4,7 @@ import { signInWithGoogle, signInWithEmail, signUpWithEmail, getGoogleRedirectRe
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/auth-context";
 import { firebaseConfigured, missingFirebaseEnv } from "@/lib/firebase";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 const HEADLINES = [
   "You stopped crying. Now stop checking.",
@@ -68,6 +69,7 @@ export default function Auth() {
   const [isSignup, setIsSignup] = useState(false);
   const [, setLocation] = useLocation();
   const { user } = useAuth();
+  const [started] = useLocalStorage("exdetox_started", false);
 
   const isMobile = typeof navigator !== "undefined" && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -78,7 +80,11 @@ export default function Auth() {
   useEffect(() => {
     const loadRedirectResult = async () => {
       try {
-        await getGoogleRedirectResult();
+        const redirectUser = await getGoogleRedirectResult();
+        if (redirectUser) {
+          setLocation(started ? "/dashboard" : "/onboarding");
+          return;
+        }
       } catch (error: unknown) {
         setError(getFirebaseErrorMessage(error, isMobile));
         setLoading(false);
@@ -86,7 +92,7 @@ export default function Auth() {
     };
 
     loadRedirectResult();
-  }, [isMobile]);
+  }, [isMobile, setLocation, started]);
 
   useEffect(() => {
     if (!firebaseConfigured && missingFirebaseEnv.length > 0) {
