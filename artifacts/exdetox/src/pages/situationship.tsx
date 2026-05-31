@@ -283,7 +283,7 @@ function SituationshipContent() {
           <div className="text-5xl mb-4">🌫️</div>
           <h2 className="text-2xl font-bold mb-2">Situationship Mode</h2>
           <p className="text-sm text-muted-foreground mb-8 max-w-xs">
-            Track your clarity streak from the last time you interacted, texted, or checked up on them.
+              Track your clarity streak from the last time you interacted, texted, or checked up on them. This is the tracker for the people who are still stuck in gray area.
           </p>
 
           <div className="w-full max-w-xs space-y-4">
@@ -314,7 +314,7 @@ function SituationshipContent() {
   }
 
   return (
-    <motion.div animate={controls} className="flex-1 flex flex-col p-5 pb-24 gap-6 overflow-y-auto">
+    <motion.div animate={controls} className="flex-1 flex flex-col p-5 pb-32 gap-6 overflow-y-auto">
       {/* Header */}
       <div className="flex items-center gap-3 pt-6">
         <button
@@ -326,7 +326,7 @@ function SituationshipContent() {
         </button>
         <div>
           <h1 className="text-xl font-bold flex items-center gap-2">🌫️ Situationship Mode</h1>
-          <p className="text-xs text-muted-foreground">Your undefined chapter.</p>
+          <p className="text-xs text-muted-foreground">Your unclear, in-between chapter.</p>
         </div>
       </div>
 

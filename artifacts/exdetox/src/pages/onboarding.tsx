@@ -38,7 +38,10 @@ export default function Onboarding() {
           ExDetox
         </h1>
         <p className="text-xl font-medium text-foreground tracking-wide">
-          Detox from the past.
+          Make no-contact less lonely.
+        </p>
+        <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+          Every hour you don't text them is progress. Pick the day you started, then use the tools here to keep moving forward without overthinking it.
         </p>
       </motion.div>
 
@@ -85,7 +88,7 @@ export default function Onboarding() {
           onClick={handleStart}
           className="w-full h-14 text-lg font-bold shadow-[0_0_20px_hsl(var(--primary)/0.3)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.6)] transition-all bg-primary hover:bg-primary/90 text-primary-foreground rounded-full mt-4"
         >
-          Start My Detox
+          Start the detox
         </Button>
       </motion.div>
     </div>

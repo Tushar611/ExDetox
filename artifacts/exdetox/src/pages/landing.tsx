@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Link, useLocation } from "wouter";
+import { useState } from "react";
+import { Link } from "wouter";
 import {
   Flame, Brain, Heart, Moon, BarChart2, BookOpen,
   Ghost, Music2, Zap, ChevronRight, Star, Shield,
@@ -30,9 +31,21 @@ const TESTIMONIALS = [
 ];
 
 const HOW_IT_WORKS = [
-  { step: "01", title: "Set your no-contact date", desc: "Tell ExDetox when you last had contact with your ex. That's day zero." },
-  { step: "02", title: "Track, heal, level up", desc: "Log your mood, complete daily missions, and watch yourself climb from Broken to Unreachable." },
+  { step: "01", title: "Set your no-contact date", desc: "Tell ExDetox when you last had contact with your ex. That becomes your day zero." },
+  { step: "02", title: "Track, heal, level up", desc: "Log your mood, complete daily missions, and watch yourself move from Broken to Unreachable." },
   { step: "03", title: "Go deep with Pro tools", desc: "Understand your attachment style, analyze your relationship dynamic, and do the shadow work." },
+];
+
+const MOOD_OPTIONS = [
+  {
+    label: "Still thinking about them",
+    desc: "A streak timer, mood check-ins, and simple tasks to help you stop refreshing their profile." },
+  {
+    label: "About to text them",
+    desc: "Use STOP ME Mode and emergency reminders so you can pause before sending a message you’ll later regret." },
+  {
+    label: "Ready to rebuild",
+    desc: "Track your emotional progress and journal the wins so you actually feel the growth over time." },
 ];
 
 const FAQS = [
@@ -44,33 +57,35 @@ const FAQS = [
 ];
 
 export default function Landing() {
-  const [, setLocation] = useLocation();
+  const [selectedMood, setSelectedMood] = useState(0);
 
   return (
     <div className="flex flex-col min-h-screen overflow-y-auto overflow-x-hidden bg-background text-foreground">
 
       {/* NAV */}
-      <nav className="sticky top-0 z-50 flex items-center justify-between px-5 py-4 border-b border-border/20 bg-background/80 backdrop-blur-xl">
-        <span className="text-lg font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-          ExDetox
-        </span>
-        <div className="flex items-center gap-3">
-          <Link href="/upgrade">
-            <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">Pricing</button>
-          </Link>
-          <Link href="/onboarding">
-            <button
-              data-testid="button-nav-start"
-              className="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors"
-            >
-              Start Free
-            </button>
-          </Link>
+      <nav className="sticky top-0 z-50 border-b border-border/20 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto w-full flex items-center justify-between px-5 lg:px-10 py-4">
+          <span className="text-lg font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+            ExDetox
+          </span>
+          <div className="flex items-center gap-3">
+            <Link href="/upgrade">
+              <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">Pricing</button>
+            </Link>
+            <Link href="/onboarding">
+              <button
+                data-testid="button-nav-start"
+                className="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors"
+              >
+                Start Free
+              </button>
+            </Link>
+          </div>
         </div>
       </nav>
 
       {/* HERO */}
-      <section className="relative flex flex-col items-center justify-center text-center px-5 pt-20 pb-24 overflow-hidden">
+      <section className="relative flex flex-col items-center justify-center text-center px-5 lg:px-10 pt-16 lg:pt-24 pb-20 lg:pb-24 overflow-hidden">
         {/* Background glow */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/15 rounded-full blur-[120px]" />
@@ -80,24 +95,24 @@ export default function Landing() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative z-10 max-w-lg mx-auto"
+          className="relative z-10 w-full max-w-5xl mx-auto text-center lg:text-left"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold mb-6">
             <Star size={11} fill="currentColor" /> Built for Gen Z heartbreak survivors
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black leading-tight tracking-tight mb-5">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-5">
             Stop checking their<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary">
               Instagram.
             </span>
           </h1>
 
-          <p className="text-base text-muted-foreground leading-relaxed mb-8 max-w-sm mx-auto">
-            ExDetox is the breakup recovery tracker built for people who want to actually heal — not just distract. Track your no-contact streak, understand your attachment style, and go from <strong className="text-foreground">Broken</strong> to <strong className="text-primary">Unreachable</strong>.
+          <p className="text-base lg:text-lg text-muted-foreground leading-relaxed mb-8 max-w-sm lg:max-w-2xl mx-auto lg:mx-0">
+            ExDetox is the breakup recovery sidekick that actually gets you. Stop refreshing their profile, keep your streak, and build a better version of yourself with tools that feel real instead of boring.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
             <Link href="/onboarding">
               <motion.button
                 data-testid="button-hero-start"
@@ -117,12 +132,52 @@ export default function Landing() {
           <p className="text-xs text-muted-foreground/50 mt-4">No account needed. Data stays on your device.</p>
         </motion.div>
 
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.5 }}
+          className="relative z-10 mt-12 max-w-5xl mx-auto w-full"
+        >
+          <div className="rounded-[2rem] border border-border/30 bg-card/70 p-5 sm:p-6 shadow-xl shadow-black/5">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-2 text-left">
+                <p className="text-xs uppercase tracking-[0.35em] font-bold text-muted-foreground">What feels most like you?</p>
+                <h2 className="text-xl font-black">Choose your current mood and see how ExDetox helps.</h2>
+              </div>
+              <div className="text-right text-xs text-muted-foreground hidden sm:block">
+                Tap a card to see the next step your recovery needs.
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {MOOD_OPTIONS.map((mood, index) => (
+                <button
+                  key={mood.label}
+                  type="button"
+                  onClick={() => setSelectedMood(index)}
+                  className={`rounded-3xl border p-4 text-left transition-all ${selectedMood === index ? "border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.12)]" : "border-border/30 bg-background/90 hover:border-primary/50"}`}
+                >
+                  <p className="text-sm font-bold mb-2">{mood.label}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{mood.desc}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-5 rounded-[2rem] border border-border/20 bg-background p-5 text-left">
+              <p className="text-sm font-semibold">Right now: {MOOD_OPTIONS[selectedMood].label}</p>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                {MOOD_OPTIONS[selectedMood].desc}
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
         {/* Healing levels preview */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="relative z-10 mt-14 flex gap-2 overflow-x-auto no-scrollbar pb-2"
+          className="relative z-10 mt-14 flex flex-wrap justify-center gap-2 pb-2 max-w-5xl"
         >
           {[
             { label: "Broken", color: "bg-red-500/20 border-red-500/30 text-red-400" },
@@ -141,7 +196,7 @@ export default function Landing() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="px-5 py-16 max-w-lg mx-auto w-full">
+      <section id="how-it-works" className="px-5 lg:px-10 py-16 max-w-6xl mx-auto w-full">
         <h2 className="text-2xl font-black text-center mb-10">How it works</h2>
         <div className="space-y-6">
           {HOW_IT_WORKS.map((s, i) => (
@@ -170,7 +225,7 @@ export default function Landing() {
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-10">
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Free forever</span>
-            <h2 className="text-2xl font-black mt-2">Everything you need to start</h2>
+            <h2 className="text-2xl font-black mt-2">Start healing without paying a rupee</h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {FEATURES_FREE.map((f, i) => (
@@ -202,7 +257,7 @@ export default function Landing() {
       </section>
 
       {/* PRO FEATURES */}
-      <section className="px-5 py-16 max-w-lg mx-auto w-full">
+      <section className="px-5 lg:px-10 py-16 max-w-6xl mx-auto w-full">
         <div className="text-center mb-10">
           <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
             <Star size={11} fill="currentColor" /> Pro Plan

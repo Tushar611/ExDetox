@@ -36,7 +36,7 @@ export default function Quiz() {
 
   if (showResult || lastResult && currentQ === 0 && !showResult && score === 0) {
     return (
-      <div className="flex-1 flex flex-col p-6 items-center justify-center text-center space-y-8 pb-24">
+      <div className="flex-1 flex flex-col p-6 items-center justify-center text-center space-y-8 pb-32">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -45,16 +45,16 @@ export default function Quiz() {
           <div className="w-24 h-24 rounded-full bg-accent/20 mx-auto flex items-center justify-center text-4xl shadow-[0_0_30px_hsl(var(--accent)/0.3)]">
             🧠
           </div>
-          <h2 className="text-3xl font-bold">Your Diagnosis</h2>
+          <h2 className="text-3xl font-bold">Quiz Result</h2>
           <p className="text-xl font-medium text-primary drop-shadow-[0_0_10px_hsl(var(--primary)/0.5)]">
-            {showResult ? lastResult : lastResult}
+            {lastResult}
           </p>
           <Button 
             onClick={restart}
             variant="outline"
             className="mt-8 rounded-full border-primary text-primary hover:bg-primary/10 w-full"
           >
-            Take Again
+            Try again
           </Button>
         </motion.div>
       </div>
@@ -64,7 +64,7 @@ export default function Quiz() {
   const q = QUIZ_QUESTIONS[currentQ];
 
   return (
-    <div className="flex-1 flex flex-col p-6 pb-24 max-w-md mx-auto w-full">
+    <div className="flex-1 flex flex-col p-6 pb-32 max-w-md mx-auto w-full">
       <div className="pt-8 mb-12">
         <div className="flex justify-between items-center mb-4">
           <span className="text-sm font-bold text-muted-foreground tracking-widest uppercase">

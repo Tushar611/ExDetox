@@ -20,33 +20,38 @@ export default function Dashboard() {
   const { isPro, trialActive, trialDaysLeft } = useProStatus();
 
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto overflow-x-hidden space-y-8 scroll-smooth pb-24">
+    <div className="flex-1 flex flex-col p-6 lg:p-10 overflow-y-auto overflow-x-hidden scroll-smooth pb-32">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between pt-4"
+        className="space-y-3 pt-4"
       >
-        <h1 className="text-xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-          ExDetox
-        </h1>
-        {!isPro && (
-          <Link href="/upgrade">
-            <button
-              data-testid="button-upgrade-banner"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20 transition-colors"
-            >
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+            ExDetox
+          </h1>
+          {!isPro && (
+            <Link href="/upgrade">
+              <button
+                data-testid="button-upgrade-banner"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20 transition-colors"
+              >
+                <Crown size={12} />
+                Upgrade healing
+              </button>
+            </Link>
+          )}
+          {isPro && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
               <Crown size={12} />
-              Go Pro
-            </button>
-          </Link>
-        )}
-        {isPro && (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
-            <Crown size={12} />
-            Pro
-          </div>
-        )}
+              Pro
+            </div>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground max-w-2xl">
+          Your recovery dashboard. Track your streak, start a quick check-in, and use the emergency tools when the urge hits.
+        </p>
       </motion.div>
 
       {/* Trial banner */}
@@ -54,86 +59,122 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/25 text-xs font-semibold"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/25 text-xs font-semibold mt-6"
         >
           <Clock size={13} className="text-primary flex-shrink-0" />
-          <span className="text-primary">Pro Trial active — <span className="font-black">{trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} left</span></span>
-          <Link href="/upgrade" className="ml-auto text-primary/70 hover:text-primary underline transition-colors">Upgrade</Link>
+          <span className="text-primary">
+            Pro Trial is on —{" "}
+            <span className="font-black">
+              {trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} left
+            </span>
+          </span>
+          <Link
+            href="/upgrade"
+            className="ml-auto text-primary/70 hover:text-primary underline transition-colors"
+          >
+            Keep it going
+          </Link>
         </motion.div>
       )}
 
-      {/* Streak */}
-      <StreakCounter ncDate={ncDate} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6">
+        <div className="lg:col-span-7 space-y-6">
+          <StreakCounter ncDate={ncDate} />
 
-      {/* Rotating Quote */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <RotatingQuote />
-      </motion.div>
-
-      {/* Custom Pledge (Pro) */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-        <CustomPledge />
-      </motion.div>
-
-      {/* Mood */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <MoodTracker />
-      </motion.div>
-
-      {/* Missions */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-        <DailyMissions />
-      </motion.div>
-
-      {/* Healing Tools (Pro) */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
-        <ProFeaturesRow />
-      </motion.div>
-
-      {/* Situationship Mode */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42 }}>
-        <SituationshipCard />
-      </motion.div>
-
-      {/* Healing Playlist (Pro) */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-        <HealingPlaylist />
-      </motion.div>
-
-      {/* Share Progress Card */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.48 }}>
-        <Link href="/healing-card">
           <motion.div
-            whileTap={{ scale: 0.98 }}
-            data-testid="card-healing-card-link"
-            className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/5 border border-primary/20 cursor-pointer hover:border-primary/40 transition-colors"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
           >
-            <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
-              <Sparkles size={18} className="text-primary" />
-            </div>
-            <div className="flex-1">
-              <p className="font-bold text-sm">Share Your Progress</p>
-              <p className="text-xs text-muted-foreground">Create a card for Instagram Stories</p>
-            </div>
-            <span className="text-primary text-lg">→</span>
+            <RotatingQuote />
           </motion.div>
-        </Link>
-      </motion.div>
 
-      {/* Actions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="pt-4 space-y-4"
-      >
-        <StopMeButton />
-        <RelapseButton />
-      </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="pt-2 space-y-4"
+          >
+            <StopMeButton />
+            <RelapseButton />
+          </motion.div>
+        </div>
+
+        <div className="lg:col-span-5 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            <CustomPledge />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <MoodTracker />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <DailyMissions />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38 }}
+          >
+            <ProFeaturesRow />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.42 }}
+          >
+            <SituationshipCard />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+          >
+            <HealingPlaylist />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.48 }}
+          >
+            <Link href="/healing-card">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                data-testid="card-healing-card-link"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/5 border border-primary/20 cursor-pointer hover:border-primary/40 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
+                  <Sparkles size={18} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-sm">Share Your Progress</p>
+                  <p className="text-xs text-muted-foreground">
+                    Create a card for Instagram Stories
+                  </p>
+                </div>
+                <span className="text-primary text-lg">â†’</span>
+              </motion.div>
+            </Link>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <div className="absolute bottom-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-accent/20 blur-[120px] animate-pulse" style={{ animationDuration: '12s' }} />
       </div>
 
-      <main className="flex-1 z-10 w-full max-w-md mx-auto flex flex-col relative pb-safe">
+      <main className="flex-1 z-10 w-full max-w-md lg:max-w-6xl mx-auto flex flex-col relative pb-[calc(env(safe-area-inset-bottom)+5rem)]">
         <AnimatePresence mode="wait">
           <motion.div
             key={location}

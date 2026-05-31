@@ -10,14 +10,18 @@ interface ProGateProps {
   description?: string;
 }
 
-export function ProGate({ children, feature = "This feature", description = "Unlock the full healing experience." }: ProGateProps) {
+export function ProGate({
+  children,
+  feature = "This feature",
+  description = "Unlock the full healing experience.",
+}: ProGateProps) {
   const { isPro } = useProStatus();
 
   if (isPro) return <>{children}</>;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden">
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md rounded-2xl border border-primary/30 p-6 text-center">
+    <div className="relative rounded-2xl overflow-hidden min-h-[260px]">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md rounded-2xl border border-primary/30 px-6 py-7 text-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -27,7 +31,9 @@ export function ProGate({ children, feature = "This feature", description = "Unl
           <Lock size={22} className="text-primary" />
         </motion.div>
         <h3 className="font-bold text-lg mb-1">{feature}</h3>
-        <p className="text-sm text-muted-foreground mb-5">{description}</p>
+        <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+          {description}
+        </p>
         <Link href="/upgrade">
           <button
             data-testid="button-pro-upgrade"
@@ -37,7 +43,9 @@ export function ProGate({ children, feature = "This feature", description = "Unl
             Unlock Pro
           </button>
         </Link>
-        <p className="text-xs text-muted-foreground mt-3">Starting at ₹99/month</p>
+        <p className="text-xs text-muted-foreground mt-4">
+          Starting at ₹99/month
+        </p>
       </div>
       <div className="opacity-20 pointer-events-none select-none blur-sm">
         {children}
@@ -45,3 +53,4 @@ export function ProGate({ children, feature = "This feature", description = "Unl
     </div>
   );
 }
+

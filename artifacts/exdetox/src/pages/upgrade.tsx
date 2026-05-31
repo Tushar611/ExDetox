@@ -131,7 +131,7 @@ export default function Upgrade() {
           <h1 className="font-bold text-lg flex items-center gap-2">
             <Crown size={18} className="text-primary" /> ExDetox Pro
           </h1>
-          <p className="text-xs text-muted-foreground">Upgrade your healing journey</p>
+          <p className="text-xs text-muted-foreground">Unlock deeper healing with guided tools</p>
         </div>
       </div>
 
@@ -149,8 +149,8 @@ export default function Upgrade() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-accent/30 border border-primary/30 flex items-center justify-center mx-auto mb-4 shadow-[0_0_40px_hsl(var(--primary)/0.3)]">
                 <Crown size={28} className="text-primary" />
               </div>
-              <h2 className="text-2xl font-bold mb-1">Go Pro</h2>
-              <p className="text-sm text-muted-foreground">Everything you need to actually heal.</p>
+              <h2 className="text-2xl font-bold mb-1">Get deeper than streaks.</h2>
+              <p className="text-sm text-muted-foreground">Pro gives you clarity, accountability, and a real plan for healing.</p>
             </div>
 
             {/* Plan toggle */}
@@ -166,7 +166,7 @@ export default function Upgrade() {
               >
                 <p className="text-xs text-muted-foreground mb-1">Monthly</p>
                 <p className="text-2xl font-bold">₹99</p>
-                <p className="text-xs text-muted-foreground">per month</p>
+                <p className="text-xs text-muted-foreground">monthly support</p>
               </button>
 
               <button
@@ -183,7 +183,7 @@ export default function Upgrade() {
                 </div>
                 <p className="text-xs text-muted-foreground mb-1">Annual</p>
                 <p className="text-2xl font-bold">₹799</p>
-                <p className="text-xs text-muted-foreground">₹67/month</p>
+                <p className="text-xs text-muted-foreground">annual support</p>
               </button>
             </div>
 
@@ -245,7 +245,7 @@ export default function Upgrade() {
                   Opening Razorpay…
                 </span>
               ) : (
-                `Pay ${selectedPlan === "monthly" ? "₹99/month" : "₹799/year"} via Razorpay`
+                `Unlock Pro — ${selectedPlan === "monthly" ? "₹99/month" : "₹799/year"}`
               )}
             </button>
 

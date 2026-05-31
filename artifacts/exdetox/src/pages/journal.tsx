@@ -47,14 +47,14 @@ function JournalContent() {
   };
 
   return (
-    <div className="flex-1 flex flex-col p-5 pb-24 gap-5">
+    <div className="flex-1 flex flex-col p-5 pb-32 gap-5">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pt-6">
         <div className="flex items-center gap-2 mb-1">
           <BookOpen size={20} className="text-primary" />
           <h1 className="text-2xl font-bold">Glow Up Journal</h1>
         </div>
-        <p className="text-sm text-muted-foreground">Private. Raw. Yours.</p>
+        <p className="text-sm text-muted-foreground">Private. Raw. Yours. Write the truth you haven't said out loud.</p>
       </motion.div>
 
       {/* Write entry */}
@@ -73,6 +73,7 @@ function JournalContent() {
             <span className="font-semibold text-sm">Today's entry</span>
           </div>
           <p className="text-sm text-muted-foreground italic">"{PROMPTS[promptIdx]}"</p>
+          <p className="text-xs text-muted-foreground mt-3">Write what your heart actually needed today.</p>
         </motion.button>
       )}
 
@@ -153,7 +154,7 @@ function JournalContent() {
         <div className="text-center py-12 text-muted-foreground">
           <Sparkles size={32} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">Your journal is empty.</p>
-          <p className="text-xs mt-1">Start your first entry above.</p>
+          <p className="text-xs mt-1">Try writing one honest sentence about today.</p>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { signInWithGoogle } from "@/lib/auth";
+import { signInWithGoogle, signInWithEmail, signUpWithEmail } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -22,6 +22,9 @@ export default function Auth() {
   const [headlineIdx, setHeadlineIdx] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignup, setIsSignup] = useState(false);
   const [, setLocation] = useLocation();
   const { user } = useAuth();
 
@@ -44,6 +47,31 @@ export default function Auth() {
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Sign-in failed";
       if (!msg.includes("popup-closed")) setError("Sign-in failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      if (isSignup) {
+        await signUpWithEmail(email, password);
+      } else {
+        await signInWithEmail(email, password);
+      }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Authentication failed";
+      setError(msg.includes("auth/") ? msg.replace("Firebase: ", "") : "Unable to sign in. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -155,7 +183,7 @@ export default function Auth() {
           transition={{ delay: 0.4 }}
           className="text-base text-slate-400 leading-relaxed"
         >
-          Track your no-contact streak, log your moods, complete healing missions — and become unreachable.
+          Stop the scrolling, keep your streak, and use healing tools that actually help you feel better.
         </motion.p>
 
         {/* Stats row */}
@@ -173,11 +201,69 @@ export default function Auth() {
           ))}
         </motion.div>
 
+        {/* Email/password form */}
+        <motion.form
+          onSubmit={handleEmailSubmit}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="w-full flex flex-col gap-3"
+        >
+          <div className="grid gap-3">
+            <div className="flex flex-col gap-2 text-left">
+              <label htmlFor="email" className="text-sm font-semibold text-slate-300">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={loading}
+                className="w-full rounded-3xl border border-slate-800 bg-slate-950/80 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-violet-500 focus:outline-none"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 text-left">
+              <label htmlFor="password" className="text-sm font-semibold text-slate-300">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                disabled={loading}
+                className="w-full rounded-3xl border border-slate-800 bg-slate-950/80 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-violet-500 focus:outline-none"
+                placeholder="Enter password"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-2xl bg-white/10 px-5 py-4 text-base font-bold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? (isSignup ? "Creating account..." : "Signing in...") : isSignup ? "Start healing" : "Sign in"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsSignup((current) => !current)}
+            disabled={loading}
+            className="text-sm text-slate-400 underline hover:text-white"
+          >
+            {isSignup ? "Already have an account? Sign in" : "Need a fresh start? Create account"}
+          </button>
+        </motion.form>
+
         {/* Google sign-in button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.8 }}
           className="w-full flex flex-col gap-3"
         >
           <motion.button
@@ -240,7 +326,7 @@ export default function Auth() {
         className="relative z-10 pb-8 px-6 text-center max-w-sm"
       >
         <p className="text-xs text-slate-600 italic leading-relaxed">
-          "I was checking their Instagram 30 times a day. After 14 days on ExDetox, I stopped caring."
+          "I was checking their Instagram 30 times a day. After 14 days on ExDetox, I stopped caring and started feeling stronger."
         </p>
         <p className="text-xs text-slate-700 mt-1">— Priya, Day 21</p>
       </motion.div>

@@ -14,6 +14,7 @@ export function StopMeButton() {
       const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
       return () => clearInterval(timer);
     }
+    return;
   }, [isOpen, timeLeft]);
 
   const handleOpen = () => {

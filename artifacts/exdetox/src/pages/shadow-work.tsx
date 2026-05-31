@@ -103,7 +103,7 @@ function ShadowWorkContent() {
       <div className="flex flex-col px-5 gap-5">
         {/* What is shadow work */}
         <div className="text-xs text-muted-foreground/70 bg-card/20 border border-border/20 rounded-xl p-3 leading-relaxed">
-          Shadow work means looking at the parts of yourself and your patterns that you normally avoid. It's uncomfortable. It's also where real healing happens.
+          This is the work you don't want to do — the honest, uncomfortable questions that actually change the way you move forward. It's hard, but it works.
         </div>
 
         {/* Today's prompt */}

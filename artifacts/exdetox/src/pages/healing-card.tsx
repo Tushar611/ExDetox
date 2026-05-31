@@ -61,6 +61,13 @@ function getLevel(days: number) {
   return LEVELS[0];
 }
 
+function getNextLevel(days: number) {
+  const current = getLevel(days);
+  const currentIdx = LEVELS.findIndex((l) => l.name === current.name);
+  const next = LEVELS[currentIdx + 1];
+  return next ? { current, next } : { current, next: null };
+}
+
 function getQuote(levelName: string, seed: number): string {
   const quotes = LEVEL_QUOTES[levelName] ?? LEVEL_QUOTES["Broken"];
   return quotes[seed % quotes.length];
@@ -84,8 +91,13 @@ export default function HealingCard() {
 
   const days = Math.max(0, differenceInDays(new Date(), new Date(ncDate)));
   const level = getLevel(days);
+  const { next } = getNextLevel(days);
   const quote = getQuote(level.name, quoteIdx);
   const theme = CARD_THEMES[themeIdx];
+  const daysToNext = next ? Math.max(0, next.startDay - days) : 0;
+  const progressToNext = next
+    ? Math.min(100, Math.max(0, (days / next.startDay) * 100))
+    : 100;
 
   const download = async () => {
     if (!cardRef.current) return;
@@ -133,7 +145,7 @@ export default function HealingCard() {
         </button>
         <div>
           <h1 className="font-bold text-lg">Healing Card</h1>
-          <p className="text-xs text-muted-foreground">Save & share your progress.</p>
+          <p className="text-xs text-muted-foreground">Save and celebrate your progress with a shareable card.</p>
         </div>
       </div>
 
@@ -155,6 +167,9 @@ export default function HealingCard() {
               height: "100%",
               backgroundColor: theme.bg,
               borderRadius: "24px",
+              border: "1px solid rgba(255,255,255,0.06)",
+              boxShadow:
+                "0 30px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -165,6 +180,34 @@ export default function HealingCard() {
               fontFamily: "'Space Grotesk', system-ui, sans-serif",
             }}
           >
+            {/* Soft gradient wash */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  `linear-gradient(180deg, ${theme.accent}10 0%, transparent 35%, transparent 70%, ${level.color}08 100%)`,
+                pointerEvents: "none",
+              }}
+            />
+
+            {/* Top accent bar */}
+            <div
+              style={{
+                position: "absolute",
+                top: 16,
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: 150,
+                height: 6,
+                borderRadius: 999,
+                backgroundImage: `linear-gradient(90deg, ${theme.accent}, #c084fc)`,
+                opacity: 0.95,
+                boxShadow: `0 0 24px ${theme.accent}55`,
+                pointerEvents: "none",
+              }}
+            />
+
             {/* Glow blobs */}
             <div style={{
               position: "absolute",
@@ -193,10 +236,12 @@ export default function HealingCard() {
             {/* Top: Logo + tagline */}
             <div style={{ textAlign: "center", zIndex: 1 }}>
               <div style={{
+                display: "inline-block",
                 fontSize: "22px",
                 fontWeight: "900",
                 letterSpacing: "-0.5px",
-                background: `linear-gradient(90deg, ${theme.accent}, #c084fc)`,
+                backgroundImage: `linear-gradient(90deg, ${theme.accent}, #c084fc)`,
+                backgroundRepeat: "no-repeat",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 marginBottom: "4px",
@@ -219,11 +264,13 @@ export default function HealingCard() {
                 Day
               </div>
               <div style={{
+                display: "inline-block",
                 fontSize: "96px",
                 fontWeight: "900",
                 lineHeight: "1",
                 letterSpacing: "-4px",
-                background: `linear-gradient(135deg, #ffffff 0%, ${theme.accent} 100%)`,
+                backgroundImage: `linear-gradient(135deg, #ffffff 0%, ${theme.accent} 100%)`,
+                backgroundRepeat: "no-repeat",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 marginBottom: "16px",
@@ -238,8 +285,10 @@ export default function HealingCard() {
                 gap: "6px",
                 padding: "6px 16px",
                 borderRadius: "100px",
-                backgroundColor: `${level.color}18`,
-                border: `1px solid ${level.color}50`,
+                backgroundColor: `${level.color}16`,
+                border: `1px solid ${level.color}55`,
+                boxShadow: `0 10px 30px ${level.color}12`,
+                backdropFilter: "blur(8px)",
               }}>
                 <div style={{
                   width: "7px",
@@ -252,6 +301,47 @@ export default function HealingCard() {
                   {level.name}
                 </span>
               </div>
+
+              {/* Progress to next level */}
+              {next && (
+                <div style={{ marginTop: "14px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: "10px",
+                      letterSpacing: "1.5px",
+                      textTransform: "uppercase",
+                      color: "#64748b",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    <span>Next: {next.name}</span>
+                    <span>{daysToNext}d</span>
+                  </div>
+                  <div
+                    style={{
+                      width: "240px",
+                      maxWidth: "72vw",
+                      height: "6px",
+                      borderRadius: 999,
+                      backgroundColor: "rgba(148,163,184,0.16)",
+                      overflow: "hidden",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${progressToNext}%`,
+                        height: "100%",
+                        borderRadius: 999,
+                        backgroundImage: `linear-gradient(90deg, ${theme.accent}, ${level.color})`,
+                        boxShadow: `0 0 18px ${theme.accent}33`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Quote */}
@@ -272,7 +362,7 @@ export default function HealingCard() {
               {/* Bottom: URL */}
               <div style={{
                 fontSize: "11px",
-                color: "#334155",
+                color: "rgba(148,163,184,0.55)",
                 letterSpacing: "1px",
                 fontWeight: "600",
               }}>
@@ -317,7 +407,7 @@ export default function HealingCard() {
             className="w-full py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold flex items-center justify-center gap-2 shadow-[0_0_30px_hsl(var(--primary)/0.4)]"
           >
             <Share2 size={16} />
-            {shared ? "Shared!" : "Share to Stories"}
+            {shared ? "Shared!" : "Share progress"}
           </motion.button>
 
           <button
@@ -327,13 +417,13 @@ export default function HealingCard() {
             className="w-full py-3.5 rounded-2xl border border-border/50 bg-card/40 font-semibold text-sm flex items-center justify-center gap-2 hover:border-primary/30 transition-colors disabled:opacity-50"
           >
             <Download size={15} />
-            {downloading ? "Saving…" : "Save as Image"}
+            {downloading ? "Saving…" : "Download card"}
           </button>
         </div>
 
         {/* Tip */}
         <p className="text-xs text-muted-foreground/50 text-center max-w-xs leading-relaxed">
-          The card saves as a PNG you can post to Instagram Stories, WhatsApp, or wherever. Switch themes and shuffle quotes to find what fits your vibe.
+          This saves as a PNG you can post to Instagram Stories, WhatsApp, or save for later. Switch themes and shuffle quotes until it matches your mood.
         </p>
       </div>
     </div>

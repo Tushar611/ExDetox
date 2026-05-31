@@ -17,7 +17,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border pb-safe">
-      <div className="flex items-center justify-around h-16 max-w-md mx-auto px-2">
+      <div className="flex items-center justify-around h-16 max-w-md lg:max-w-6xl mx-auto px-2">
         {links.map(({ href, icon: Icon, label, pro }) => {
           const isActive = location === href;
           const isLocked = pro && !isPro;

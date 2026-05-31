@@ -161,7 +161,7 @@ function AttachmentContent() {
             <div>
               <h2 className="text-2xl font-bold mb-2">How do you attach?</h2>
               <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-                Your attachment style shapes every relationship you have. Understanding it is one of the most powerful things you can do for your healing — and your future.
+                Your attachment style is not a label — it is a map. Knowing it helps you stop repeating the same painful cycle and know what your heart actually needs.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
@@ -175,7 +175,7 @@ function AttachmentContent() {
             <button data-testid="button-start-attachment"
               onClick={() => setStep("quiz")}
               className="w-full max-w-xs py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow-[0_0_30px_hsl(var(--primary)/0.4)]">
-              Find Your Style →
+              Find your style →
             </button>
           </motion.div>
         )}

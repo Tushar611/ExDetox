@@ -81,7 +81,7 @@ function ExAnalysisContent() {
             <div>
               <h2 className="text-2xl font-bold mb-2">What was that, really?</h2>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                8 questions about your relationship. Based on your answers, we'll identify the dynamic you were in — and give you real insight to help you heal.
+                8 quick questions about your relationship. We'll identify the dynamic you were in and give you the honest, useful insight you need to move forward.
               </p>
             </div>
 
@@ -99,7 +99,7 @@ function ExAnalysisContent() {
               onClick={() => setStep("quiz")}
               className="w-full max-w-xs py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow-[0_0_30px_hsl(var(--primary)/0.4)]"
             >
-              Start Analysis →
+              Start the analysis →
             </button>
             <p className="text-xs text-muted-foreground">~2 minutes. No right or wrong answers.</p>
           </motion.div>

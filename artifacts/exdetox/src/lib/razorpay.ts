@@ -1,18 +1,24 @@
 // Dynamically loads the Razorpay checkout script and returns the Razorpay constructor.
 
+declare global {
+  interface Window {
+    Razorpay?: RazorpayConstructor;
+  }
+}
+
 export function loadRazorpay(): Promise<RazorpayConstructor> {
   return new Promise((resolve, reject) => {
     if (typeof window === "undefined") return reject(new Error("No window"));
 
-    if ((window as Window & { Razorpay?: RazorpayConstructor }).Razorpay) {
-      return resolve((window as Window & { Razorpay: RazorpayConstructor }).Razorpay);
+    if (window.Razorpay) {
+      return resolve(window.Razorpay);
     }
 
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     script.onload = () => {
-      const rp = (window as Window & { Razorpay?: RazorpayConstructor }).Razorpay;
+      const rp = window.Razorpay;
       if (rp) resolve(rp);
       else reject(new Error("Razorpay script loaded but constructor not found"));
     };
@@ -41,3 +47,5 @@ export interface RazorpayResponse {
 }
 
 export type RazorpayConstructor = new (options: RazorpayOptions) => { open(): void };
+
+export {};

@@ -75,14 +75,14 @@ function AnalyticsContent() {
   const maxCount = Math.max(...Object.values(moodCounts), 1);
 
   return (
-    <div className="flex-1 flex flex-col p-5 pb-24 gap-6">
+    <div className="flex-1 flex flex-col p-5 pb-32 gap-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pt-6">
         <div className="flex items-center gap-2 mb-1">
           <BarChart2 size={20} className="text-primary" />
           <h1 className="text-2xl font-bold">Healing Analytics</h1>
         </div>
-        <p className="text-sm text-muted-foreground">See how far you've actually come.</p>
+        <p className="text-sm text-muted-foreground">Track your progress, not just the pain.</p>
       </motion.div>
 
       {/* Stat cards */}
@@ -110,7 +110,7 @@ function AnalyticsContent() {
         <div className="bg-card/40 border border-border/50 rounded-2xl p-4 backdrop-blur-sm">
           <span className="text-2xl mb-1 block">{topMood ? MOOD_META[topMood]?.emoji : "—"}</span>
           <p className="text-sm font-bold capitalize">{topMood || "None yet"}</p>
-          <p className="text-xs text-muted-foreground mt-1">Most frequent</p>
+          <p className="text-xs text-muted-foreground mt-1">Most common feeling</p>
         </div>
       </motion.div>
 
@@ -121,7 +121,7 @@ function AnalyticsContent() {
         transition={{ delay: 0.2 }}
         className="bg-card/40 border border-border/50 rounded-2xl p-5 backdrop-blur-sm"
       >
-        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Last 7 days</h3>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Weekly mood snapshot</h3>
         <div className="flex justify-between items-end gap-1">
           {last7.map(({ date, mood }, idx) => {
             const meta = mood ? MOOD_META[mood] : null;
@@ -172,7 +172,7 @@ function AnalyticsContent() {
         <div className="text-center py-10 text-muted-foreground">
           <BarChart2 size={32} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">No mood data yet.</p>
-          <p className="text-xs mt-1">Log your first mood on the dashboard.</p>
+          <p className="text-xs mt-1">Log how you feel on the dashboard so you can actually see your progress.</p>
         </div>
       )}
     </div>

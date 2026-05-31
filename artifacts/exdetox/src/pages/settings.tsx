@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useProStatus } from "@/hooks/use-pro-status";
 import { useLocation } from "wouter";
+import { signOut } from "@/lib/auth";
 import { Trash2, Crown, Zap, Gift, Copy, Check, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
@@ -17,6 +18,18 @@ export default function Settings() {
   const referralCode = getMyReferralCode();
   const shareUrl = getReferralShareUrl(referralCode);
   const referralCount = getReferralCount();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    if (!confirm("Are you sure you want to sign out? You can sign back in anytime.")) return;
+    setSigningOut(true);
+    try {
+      await signOut();
+      setLocation("/");
+    } finally {
+      setSigningOut(false);
+    }
+  };
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(shareUrl);
@@ -38,7 +51,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex-1 flex flex-col p-6 pb-24 overflow-y-auto">
+    <div className="flex-1 flex flex-col p-6 pb-32 overflow-y-auto">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pt-8 mb-8">
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground text-sm">Manage your detox journey.</p>
@@ -111,7 +124,7 @@ export default function Settings() {
             <h3 className="font-bold">Refer a Friend</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-4">
-            Share your link. They get <span className="text-primary font-semibold">7 days free Pro</span> automatically when they open it. No signup needed.
+            Send your link. They get <span className="text-primary font-semibold">7 days free Pro</span> when they open it — and you both win.
           </p>
 
           {/* Referral code display */}
@@ -166,12 +179,27 @@ export default function Settings() {
             <Trash2 size={18} /> Danger Zone
           </h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Erase all history, moods, journal, and your current streak. You will be sent back to the start.
+            Erase all history, moods, journal entries, and your current streak. You'll be sent back to day one.
           </p>
           <Button variant="destructive" className="w-full font-bold tracking-wide"
             onClick={handleResetEverything} data-testid="button-reset-everything">
             Reset Everything
           </Button>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="bg-card/40 border border-border/50 rounded-2xl p-5 backdrop-blur-sm">
+          <h3 className="font-bold mb-2">Account</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Sign out when you need a break and come back whenever you're ready.
+          </p>
+          <button
+            onClick={handleSignOut}
+            disabled={signingOut}
+            className="w-full py-3.5 rounded-2xl border border-border/50 bg-background/70 font-semibold text-sm text-foreground hover:bg-card/60 transition-colors disabled:opacity-60"
+          >
+            {signingOut ? "Signing out..." : "Sign out"}
+          </button>
         </motion.div>
       </div>
 
