@@ -5,23 +5,33 @@ import { getGoogleRedirectResult, onAuthChange } from "@/lib/auth";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  debugStatus: string;
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
+const AuthContext = createContext<AuthContextType>({ user: null, loading: true, debugStatus: "init" });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [debugStatus, setDebugStatus] = useState("init");
 
   useEffect(() => {
     let active = true;
     let unsubscribe = () => {};
 
     const bootstrapAuth = async () => {
+      setDebugStatus("checking-redirect-result");
+
       try {
-        await getGoogleRedirectResult();
+        const redirectUser = await getGoogleRedirectResult();
+        if (redirectUser) {
+          setDebugStatus(`redirect-user:${redirectUser.uid}`);
+        } else {
+          setDebugStatus("redirect-empty");
+        }
       } catch {
         // Auth page surfaces user-facing errors; the provider just waits for Firebase to settle.
+        setDebugStatus("redirect-error");
       }
 
       if (!active) return;
@@ -29,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       unsubscribe = onAuthChange((u) => {
         if (!active) return;
         setUser(u);
+        setDebugStatus(u ? `auth-user:${u.uid}` : "auth-null");
         setLoading(false);
       });
     };
@@ -41,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, debugStatus }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

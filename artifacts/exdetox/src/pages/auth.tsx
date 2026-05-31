@@ -67,7 +67,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [isSignup, setIsSignup] = useState(false);
   const [, setLocation] = useLocation();
-  const { user } = useAuth();
+  const { user, loading: authLoading, debugStatus } = useAuth();
 
   const isMobile = typeof navigator !== "undefined" && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -392,6 +392,12 @@ export default function Auth() {
           {error && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="text-sm text-red-400 text-center">{error}</motion.p>
+          )}
+
+          {isMobile && (
+            <p className="text-[11px] text-slate-500 text-center break-all">
+              Auth debug: {authLoading ? `loading:${debugStatus}` : debugStatus}
+            </p>
           )}
 
           {loading && isMobile && (
