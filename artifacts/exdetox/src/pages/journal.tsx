@@ -2,9 +2,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useProStatus } from "@/hooks/use-pro-status";
-import { ProGate } from "@/components/pro/ProGate";
 import { format, parseISO } from "date-fns";
-import { BookOpen, Plus, X, Sparkles } from "lucide-react";
+import { BookOpen, Plus, X, Sparkles, Lock } from "lucide-react";
+import { Link } from "wouter";
+import { Crown } from "lucide-react";
 
 interface JournalEntry {
   id: string;
@@ -31,11 +32,16 @@ function JournalContent() {
   const [writing, setWriting] = useState(false);
   const [text, setText] = useState("");
   const [promptIdx] = useState(() => Math.floor(Math.random() * PROMPTS.length));
+  const { isPro } = useProStatus();
   const today = format(new Date(), "yyyy-MM-dd");
   const hasEntryToday = entries.some(e => e.date === today);
+  
+  // Free tier: 3 total entries limit
+  const entriesLimit = isPro ? Infinity : 3;
+  const canWrite = isPro || entries.length < entriesLimit;
 
   const save = () => {
-    if (!text.trim()) return;
+    if (!text.trim() || !canWrite) return;
     const entry: JournalEntry = {
       id: Date.now().toString(),
       date: today,
@@ -55,10 +61,15 @@ function JournalContent() {
           <h1 className="text-2xl font-bold">Glow Up Journal</h1>
         </div>
         <p className="text-sm text-muted-foreground">Private. Raw. Yours. Write the truth you haven't said out loud.</p>
+        {!isPro && entries.length >= entriesLimit && (
+          <p className="text-xs text-amber-500 mt-2 flex items-center gap-1">
+            <Lock size={12} /> Free tier: {entries.length}/{entriesLimit} entries used
+          </p>
+        )}
       </motion.div>
 
-      {/* Write entry */}
-      {!hasEntryToday && !writing && (
+      {/* Write entry - limited for free users */}
+      {!hasEntryToday && !writing && canWrite && (
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,6 +86,31 @@ function JournalContent() {
           <p className="text-sm text-muted-foreground italic">"{PROMPTS[promptIdx]}"</p>
           <p className="text-xs text-muted-foreground mt-3">Write what your heart actually needed today.</p>
         </motion.button>
+      )}
+
+      {/* Upgrade CTA for free users who hit limit */}
+      {!isPro && entries.length >= entriesLimit && !hasEntryToday && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/40 rounded-2xl p-5 text-center"
+        >
+          <div className="flex items-center justify-center mb-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/30 flex items-center justify-center">
+              <Lock size={18} className="text-primary" />
+            </div>
+          </div>
+          <h3 className="font-bold mb-1">3 free entries used</h3>
+          <p className="text-xs text-muted-foreground mb-4">
+            Upgrade to Pro for unlimited entries and keep your healing journey going strong.
+          </p>
+          <Link href="/upgrade">
+            <button className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-white text-sm font-bold hover:shadow-lg transition-shadow">
+              <Crown size={14} />
+              Upgrade to Pro
+            </button>
+          </Link>
+        </motion.div>
       )}
 
       <AnimatePresence>
@@ -122,7 +158,7 @@ function JournalContent() {
       {entries.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Previous entries — {entries.length} total
+            Previous entries — {entries.length}{!isPro ? "/" + entriesLimit : ""} {!isPro && entries.length >= entriesLimit ? "(limit reached)" : ""}
           </h3>
           {entries.map((entry, idx) => (
             <motion.div
@@ -162,12 +198,5 @@ function JournalContent() {
 }
 
 export default function Journal() {
-  return (
-    <ProGate
-      feature="Glow Up Journal"
-      description="Document your healing journey with daily private entries. Reflect on your growth and track your progress."
-    >
-      <JournalContent />
-    </ProGate>
-  );
+  return <JournalContent />;
 }

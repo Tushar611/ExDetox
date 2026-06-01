@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useProStatus } from "@/hooks/use-pro-status";
-import { ProGate } from "@/components/pro/ProGate";
 import { format, differenceInDays, parseISO } from "date-fns";
 import {
   getSituLevel,
@@ -457,12 +456,5 @@ function SituationshipContent() {
 }
 
 export default function Situationship() {
-  return (
-    <ProGate
-      feature="Situationship Mode"
-      description="A separate tracker built for the 'we were never official' pain. Your own clarity streak, red flag log, and more."
-    >
-      <SituationshipContent />
-    </ProGate>
-  );
+  return <SituationshipContent />;
 }
