@@ -25,6 +25,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const redirectUser = await getGoogleRedirectResult();
         if (redirectUser) {
+          if (!active) return;
+          setUser(redirectUser);
+          setLoading(false);
           setDebugStatus(`redirect-user:${redirectUser.uid}`);
         } else {
           setDebugStatus("redirect-empty");
