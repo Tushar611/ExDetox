@@ -19,6 +19,10 @@ const STATS = [
   { value: "Day 1", label: "is where power begins" },
 ];
 
+function isLikelyEmbeddedBrowser(userAgent: string) {
+  return /FBAN|FBAV|Instagram|Line\/|MicroMessenger|WhatsApp|wv\b|WebView/i.test(userAgent);
+}
+
 function getFirebaseErrorMessage(error: unknown, isMobile: boolean) {
   const fallback = "Sign-in failed. Please try again.";
   if (!error || typeof error !== "object") return fallback;
@@ -69,7 +73,9 @@ export default function Auth() {
   const [, setLocation] = useLocation();
   const { user, loading: authLoading, debugStatus } = useAuth();
 
-  const isMobile = typeof navigator !== "undefined" && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  const isEmbeddedBrowser = isLikelyEmbeddedBrowser(userAgent);
 
   useEffect(() => {
     if (user) setLocation("/dashboard");
@@ -97,6 +103,11 @@ export default function Auth() {
       return;
     }
 
+    if (isMobile && isEmbeddedBrowser) {
+      setError("Google sign-in works best in Chrome or Safari. Open this page in your phone’s browser, then try Google again.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     try {
@@ -113,6 +124,10 @@ export default function Auth() {
         );
 
       if (shouldFallbackToRedirect) {
+        if (isMobile) {
+          setError("Your phone blocked the Google popup. Open this page in Chrome or Safari and allow popups, or use email login.");
+          return;
+        }
         try {
           await signInWithGoogle(true);
           return;
@@ -123,9 +138,7 @@ export default function Auth() {
         setError(getFirebaseErrorMessage(error, isMobile));
       }
     } finally {
-      if (!isMobile) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
@@ -389,6 +402,15 @@ export default function Auth() {
             )}
           </motion.button>
 
+          {isMobile && (
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-left">
+              <p className="text-sm font-semibold text-slate-200">Mobile Google sign-in</p>
+              <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                Use Google sign-in in Chrome or Safari. If you opened this from WhatsApp, Instagram, or another in-app browser, tap the menu and choose <span className="font-semibold text-slate-200">Open in browser</span>.
+              </p>
+            </div>
+          )}
+
           {error && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="text-sm text-red-400 text-center">{error}</motion.p>
@@ -403,7 +425,7 @@ export default function Auth() {
           {loading && isMobile && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="text-xs text-slate-400 text-center italic">
-              Opening Google sign-in... If popup is blocked, we’ll switch to secure redirect.
+              Opening Google sign-in popup...
             </motion.p>
           )}
 
@@ -411,7 +433,7 @@ export default function Auth() {
             By continuing, you agree to our terms. Your data stays private and is never sold.
           </p>
           <p className="text-[11px] text-slate-500 text-center leading-relaxed">
-            Google sign-in on phones usually needs a deployed HTTPS domain added to Firebase Authorized domains. `localhost` works for laptop testing, but mobile testing over a local IP often gets rejected by Firebase.
+            Google sign-in on phones works best in a normal browser tab with popups allowed. Email/password is the safest fallback if your mobile browser blocks Google.
           </p>
         </motion.div>
       </div>
