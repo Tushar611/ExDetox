@@ -91,28 +91,18 @@ export default function Auth() {
   }, []);
 
   const handleGoogle = async () => {
-    console.log("Google sign-in clicked. Firebase configured:", firebaseConfigured);
     if (!firebaseConfigured) {
       const msg = `Firebase not configured. Missing: ${missingFirebaseEnv.join(", ")}`;
       setError(msg);
-      console.error(msg);
       return;
     }
 
     setLoading(true);
     setError("");
     try {
-      console.log("Calling signInWithGoogle with isMobile:", isMobile);
-      const result = await signInWithGoogle(isMobile);
-      console.log("signInWithGoogle result:", result);
-      if (!result && isMobile) {
-        // Mobile redirect initiated, page will redirect
-        console.log("Mobile redirect flow initiated");
-        return;
-      }
+      await signInWithGoogle(false);
     } catch (error: unknown) {
       const maybeError = error as { code?: string; message?: string };
-      console.error("Google sign-in error:", error);
       const shouldFallbackToRedirect =
         !isMobile &&
         (
@@ -124,21 +114,21 @@ export default function Auth() {
         );
 
       if (shouldFallbackToRedirect) {
-        console.log("Popup blocked, trying redirect fallback");
         try {
           await signInWithGoogle(true);
           return;
         } catch (redirectError: unknown) {
-          console.error("Redirect sign-in also failed:", redirectError);
           setError(getFirebaseErrorMessage(redirectError, isMobile));
         }
       } else {
+        if (isMobile && maybeError.code === "auth/popup-blocked") {
+          setError("Your phone browser blocked the Google sign-in window. Open in Chrome/Brave, allow popups for this site, and try again.");
+          return;
+        }
         setError(getFirebaseErrorMessage(error, isMobile));
       }
     } finally {
-      if (!isMobile) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
@@ -416,7 +406,7 @@ export default function Auth() {
           {loading && isMobile && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="text-xs text-slate-400 text-center italic">
-              Opening your browser to sign in...
+              Opening Google sign-in...
             </motion.p>
           )}
 
