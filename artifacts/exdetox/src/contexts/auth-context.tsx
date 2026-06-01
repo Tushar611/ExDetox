@@ -18,6 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     let unsubscribe = () => {};
+    let redirectResolvedUid: string | null = null;
 
     const bootstrapAuth = async () => {
       setDebugStatus("checking-redirect-result");
@@ -26,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const redirectUser = await getGoogleRedirectResult();
         if (redirectUser) {
           if (!active) return;
+          redirectResolvedUid = redirectUser.uid;
           setUser(redirectUser);
           setLoading(false);
           setDebugStatus(`redirect-user:${redirectUser.uid}`);
@@ -41,6 +43,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       unsubscribe = onAuthChange((u) => {
         if (!active) return;
+        if (!u && redirectResolvedUid) {
+          setDebugStatus(`redirect-persist-wait:${redirectResolvedUid}`);
+          return;
+        }
         setUser(u);
         setDebugStatus(u ? `auth-user:${u.uid}` : "auth-null");
         setLoading(false);

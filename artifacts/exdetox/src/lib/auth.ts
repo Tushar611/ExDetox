@@ -12,17 +12,27 @@ import { auth, googleProvider } from "./firebase";
 
 export async function signInWithGoogle(useRedirect = false): Promise<User | null> {
   try {
-    if (useRedirect) {
-      // signInWithRedirect navigates away and never returns control here
-      await signInWithRedirect(auth, googleProvider);
-      // Return null since the promise won't resolve (browser navigates away)
-      return null;
-    }
-
+    console.log("signInWithGoogle called with useRedirect:", useRedirect);
+    
+    // Always try popup first - simpler and works better across devices
     const result = await signInWithPopup(auth, googleProvider);
+    console.log("signInWithPopup successful:", result.user.email);
     return result.user;
-  } catch (error) {
-    console.error("Google sign-in failed:", error);
+  } catch (error: any) {
+    console.error("signInWithPopup failed:", error.code, error.message);
+    
+    // Only fallback to redirect if popup was blocked/denied
+    if (useRedirect || error.code === "auth/popup-blocked" || error.code === "auth/cancelled-popup-request") {
+      console.log("Attempting redirect flow...");
+      try {
+        await signInWithRedirect(auth, googleProvider);
+        return null; // Page will redirect
+      } catch (redirectError) {
+        console.error("signInWithRedirect also failed:", redirectError);
+        throw redirectError;
+      }
+    }
+    
     throw error;
   }
 }
