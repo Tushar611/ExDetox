@@ -23,9 +23,17 @@ export const missingFirebaseEnv = Object.entries(requiredFirebaseEnv)
   .filter(([, value]) => !value)
   .map(([key]) => key);
 
+const isLocalhost = (hostname: string) =>
+  hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+
+const resolvedAuthDomain =
+  typeof window !== "undefined" && !isLocalhost(window.location.hostname)
+    ? window.location.host
+    : requiredFirebaseEnv.VITE_FIREBASE_AUTH_DOMAIN ?? "placeholder.firebaseapp.com";
+
 const firebaseConfig = {
   apiKey: requiredFirebaseEnv.VITE_FIREBASE_API_KEY ?? "placeholder",
-  authDomain: requiredFirebaseEnv.VITE_FIREBASE_AUTH_DOMAIN ?? "placeholder.firebaseapp.com",
+  authDomain: resolvedAuthDomain,
   projectId: requiredFirebaseEnv.VITE_FIREBASE_PROJECT_ID ?? "placeholder",
   storageBucket: requiredFirebaseEnv.VITE_FIREBASE_STORAGE_BUCKET ?? "placeholder.appspot.com",
   messagingSenderId: requiredFirebaseEnv.VITE_FIREBASE_MESSAGING_SENDER_ID ?? "000000000000",

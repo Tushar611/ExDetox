@@ -1,5 +1,16 @@
 {
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/__/auth/(.*)",
+      "destination": "https://exdetox.firebaseapp.com/__/auth/$1"
+    },
+    {
+      "source": "/__/firebase/init.json",
+      "destination": "https://exdetox.firebaseapp.com/__/firebase/init.json"
+    },
+    {
+      "source": "/((?!api/|__/auth/|__/firebase/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
