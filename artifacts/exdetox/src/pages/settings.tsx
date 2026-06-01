@@ -45,13 +45,13 @@ export default function Settings() {
     
     setFeedbackSubmitting(true);
     try {
-      // Use Google Sheets API via Apps Script or simple form submission
-      // Replace with your Google Sheet form submission endpoint
-      const sheetFormUrl = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse";
+      // Google Form submission endpoint
+      const sheetFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdPmuzaKnD6-tEJ_R-cDuIU67TmpxLa7D0oaltkOpXczEQoGQ/formResponse";
       
       const formData = new FormData();
-      formData.append("entry.FEEDBACK_FIELD_ID", feedbackText);
-      formData.append("entry.TIMESTAMP_FIELD_ID", new Date().toISOString());
+      // Update these entry IDs with yours from "Get pre-filled link"
+      formData.append("entry.1234567890", feedbackText); // Replace 1234567890 with Feedback field ID
+      formData.append("entry.9876543210", new Date().toISOString()); // Replace with Timestamp field ID (optional)
       
       await fetch(sheetFormUrl, {
         method: "POST",
