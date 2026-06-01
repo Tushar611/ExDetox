@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
-import { FeedbackButton } from "@/components/FeedbackButton";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,7 +31,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </main>
 
       {showNav && <BottomNav />}
-      <FeedbackButton />
     </div>
   );
 }

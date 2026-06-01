@@ -4,7 +4,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useProStatus } from "@/hooks/use-pro-status";
 import { useLocation } from "wouter";
 import { signOut } from "@/lib/auth";
-import { Trash2, Crown, Zap, Gift, Copy, Check, Users } from "lucide-react";
+import { Trash2, Crown, Zap, Gift, Copy, Check, Users, Send, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { getMyReferralCode, getReferralShareUrl, getReferralCount } from "@/lib/referral";
@@ -14,6 +14,9 @@ export default function Settings() {
   const [, setStarted] = useLocalStorage("exdetox_started", false);
   const { isPro, plan, trialActive, trialDaysLeft, deactivate } = useProStatus();
   const [copied, setCopied] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
   const referralCode = getMyReferralCode();
   const shareUrl = getReferralShareUrl(referralCode);
@@ -35,6 +38,35 @@ export default function Settings() {
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!feedbackText.trim()) return;
+    
+    setFeedbackSubmitting(true);
+    try {
+      // Use Google Sheets API via Apps Script or simple form submission
+      // Replace with your Google Sheet form submission endpoint
+      const sheetFormUrl = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse";
+      
+      const formData = new FormData();
+      formData.append("entry.FEEDBACK_FIELD_ID", feedbackText);
+      formData.append("entry.TIMESTAMP_FIELD_ID", new Date().toISOString());
+      
+      await fetch(sheetFormUrl, {
+        method: "POST",
+        body: formData,
+        mode: "no-cors"
+      });
+      
+      setFeedbackSent(true);
+      setFeedbackText("");
+      setTimeout(() => setFeedbackSent(false), 3000);
+    } catch (error) {
+      console.error("Feedback submission failed:", error);
+    } finally {
+      setFeedbackSubmitting(false);
+    }
   };
 
   const handleResetEverything = () => {
@@ -172,8 +204,43 @@ export default function Settings() {
           )}
         </motion.div>
 
-        {/* Danger zone */}
+        {/* Feedback */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="bg-card/40 border border-border/50 rounded-2xl p-5 backdrop-blur-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <MessageSquare size={18} className="text-primary" />
+            <h3 className="font-bold">Send Feedback</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Help us improve. What's working? What could be better?
+          </p>
+          
+          {feedbackSent ? (
+            <div className="text-center py-3 px-4 rounded-xl bg-green-500/10 border border-green-500/30">
+              <p className="text-sm text-green-400 font-semibold">✓ Feedback received! Thank you 💜</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <textarea
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                placeholder="Tell us what's on your mind..."
+                className="w-full bg-background/50 border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 outline-none focus:border-primary/50 transition-colors resize-none min-h-[100px]"
+              />
+              <button
+                onClick={handleSubmitFeedback}
+                disabled={!feedbackText.trim() || feedbackSubmitting}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-white text-sm font-bold disabled:opacity-50 hover:shadow-lg transition-all"
+              >
+                <Send size={14} />
+                {feedbackSubmitting ? "Sending..." : "Send Feedback"}
+              </button>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Danger zone */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
           className="bg-card/40 border border-border/50 rounded-2xl p-5 backdrop-blur-sm">
           <h3 className="font-bold text-destructive flex items-center gap-2 mb-2">
             <Trash2 size={18} /> Danger Zone
@@ -187,7 +254,7 @@ export default function Settings() {
           </Button>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="bg-card/40 border border-border/50 rounded-2xl p-5 backdrop-blur-sm">
           <h3 className="font-bold mb-2">Account</h3>
           <p className="text-sm text-muted-foreground mb-4">
