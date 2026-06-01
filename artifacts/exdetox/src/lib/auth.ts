@@ -10,15 +10,21 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 
-export async function signInWithGoogle(useRedirect = false): Promise<User> {
-  if (useRedirect) {
-    await signInWithRedirect(auth, googleProvider);
-    // The promise never resolves here because the browser navigates away.
-    return new Promise(() => {});
-  }
+export async function signInWithGoogle(useRedirect = false): Promise<User | null> {
+  try {
+    if (useRedirect) {
+      // signInWithRedirect navigates away and never returns control here
+      await signInWithRedirect(auth, googleProvider);
+      // Return null since the promise won't resolve (browser navigates away)
+      return null;
+    }
 
-  const result = await signInWithPopup(auth, googleProvider);
-  return result.user;
+    const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  } catch (error) {
+    console.error("Google sign-in failed:", error);
+    throw error;
+  }
 }
 
 export async function getGoogleRedirectResult(): Promise<User | null> {

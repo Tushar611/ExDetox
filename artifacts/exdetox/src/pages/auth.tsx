@@ -91,17 +91,28 @@ export default function Auth() {
   }, []);
 
   const handleGoogle = async () => {
+    console.log("Google sign-in clicked. Firebase configured:", firebaseConfigured);
     if (!firebaseConfigured) {
-      setError("Firebase is not configured in this app yet. Check the `VITE_FIREBASE_*` values in `artifacts/exdetox/.env`.");
+      const msg = `Firebase not configured. Missing: ${missingFirebaseEnv.join(", ")}`;
+      setError(msg);
+      console.error(msg);
       return;
     }
 
     setLoading(true);
     setError("");
     try {
-      await signInWithGoogle(isMobile);
+      console.log("Calling signInWithGoogle with isMobile:", isMobile);
+      const result = await signInWithGoogle(isMobile);
+      console.log("signInWithGoogle result:", result);
+      if (!result && isMobile) {
+        // Mobile redirect initiated, page will redirect
+        console.log("Mobile redirect flow initiated");
+        return;
+      }
     } catch (error: unknown) {
       const maybeError = error as { code?: string; message?: string };
+      console.error("Google sign-in error:", error);
       const shouldFallbackToRedirect =
         !isMobile &&
         (
@@ -113,10 +124,12 @@ export default function Auth() {
         );
 
       if (shouldFallbackToRedirect) {
+        console.log("Popup blocked, trying redirect fallback");
         try {
           await signInWithGoogle(true);
           return;
         } catch (redirectError: unknown) {
+          console.error("Redirect sign-in also failed:", redirectError);
           setError(getFirebaseErrorMessage(redirectError, isMobile));
         }
       } else {
