@@ -104,7 +104,6 @@ export default function Auth() {
     } catch (error: unknown) {
       const maybeError = error as { code?: string; message?: string };
       const shouldFallbackToRedirect =
-        !isMobile &&
         (
           maybeError.code === "auth/popup-blocked" ||
           maybeError.code === "auth/cancelled-popup-request" ||
@@ -121,14 +120,12 @@ export default function Auth() {
           setError(getFirebaseErrorMessage(redirectError, isMobile));
         }
       } else {
-        if (isMobile && maybeError.code === "auth/popup-blocked") {
-          setError("Your phone browser blocked the Google sign-in window. Open in Chrome/Brave, allow popups for this site, and try again.");
-          return;
-        }
         setError(getFirebaseErrorMessage(error, isMobile));
       }
     } finally {
-      setLoading(false);
+      if (!isMobile) {
+        setLoading(false);
+      }
     }
   };
 
@@ -406,7 +403,7 @@ export default function Auth() {
           {loading && isMobile && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="text-xs text-slate-400 text-center italic">
-              Opening Google sign-in...
+              Opening Google sign-in... If popup is blocked, we’ll switch to secure redirect.
             </motion.p>
           )}
 
