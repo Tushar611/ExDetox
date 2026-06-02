@@ -257,7 +257,7 @@ export default function Auth() {
                 whileTap={!loading ? { scale: 0.98 } : {}}
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 px-5 py-3 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 px-5 py-3 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-violet-500/30 disabled:opacity-50"
               >
                 {loading ? (
                   <motion.div
@@ -320,7 +320,7 @@ export default function Auth() {
                   onChange={(e) => setForgotEmail(e.target.value)}
                   disabled={loading || forgotSent}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-violet-500 focus:outline-none transition disabled:opacity-60"
+                  className="w-full rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-violet-500 focus:outline-none transition"
                 />
               </div>
 
@@ -330,7 +330,8 @@ export default function Auth() {
                   animate={{ opacity: 1 }}
                   className="text-xs text-green-400 bg-green-950/30 border border-green-900/50 rounded-lg px-3 py-3 text-center"
                 >
-                  ✓ Check your email for password reset link
+                  <div className="mb-1">✓ Check your email for password reset link</div>
+                  <div className="text-xs text-green-300 font-semibold">💡 Tip: Check your spam folder too!</div>
                 </motion.div>
               ) : error ? (
                 <motion.div
@@ -346,7 +347,7 @@ export default function Auth() {
                 whileTap={!loading ? { scale: 0.98 } : {}}
                 type="submit"
                 disabled={loading || forgotSent}
-                className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 px-5 py-3 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 px-5 py-3 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-violet-500/30 disabled:opacity-50"
               >
                 {loading ? (
                   <motion.div
