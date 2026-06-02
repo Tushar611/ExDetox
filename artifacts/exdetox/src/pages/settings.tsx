@@ -4,7 +4,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useProStatus } from "@/hooks/use-pro-status";
 import { useLocation } from "wouter";
 import { signOut } from "@/lib/auth";
-import { Trash2, Crown, Zap, Gift, Copy, Check, Users, Send, MessageSquare } from "lucide-react";
+import { Trash2, Crown, Zap, Gift, Copy, Check, Users, Send, MessageSquare, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { getMyReferralCode, getReferralShareUrl, getReferralCount } from "@/lib/referral";
@@ -14,14 +14,11 @@ export default function Settings() {
   const [, setStarted] = useLocalStorage("exdetox_started", false);
   const { isPro, plan, trialActive, trialDaysLeft, deactivate } = useProStatus();
   const [copied, setCopied] = useState(false);
-  const [feedbackText, setFeedbackText] = useState("");
-  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
-  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const referralCode = getMyReferralCode();
   const shareUrl = getReferralShareUrl(referralCode);
   const referralCount = getReferralCount();
-  const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOut = async () => {
     if (!confirm("Are you sure you want to sign out? You can sign back in anytime.")) return;
@@ -38,35 +35,6 @@ export default function Settings() {
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
-  };
-
-  const handleSubmitFeedback = async () => {
-    if (!feedbackText.trim()) return;
-    
-    setFeedbackSubmitting(true);
-    try {
-      // Google Form submission endpoint
-      const sheetFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdPmuzaKnD6-tEJ_R-cDuIU67TmpxLa7D0oaltkOpXczEQoGQ/formResponse";
-      
-      const formData = new FormData();
-      // Update these entry IDs with yours from "Get pre-filled link"
-      formData.append("entry.1234567890", feedbackText); // Replace 1234567890 with Feedback field ID
-      formData.append("entry.9876543210", new Date().toISOString()); // Replace with Timestamp field ID (optional)
-      
-      await fetch(sheetFormUrl, {
-        method: "POST",
-        body: formData,
-        mode: "no-cors"
-      });
-      
-      setFeedbackSent(true);
-      setFeedbackText("");
-      setTimeout(() => setFeedbackSent(false), 3000);
-    } catch (error) {
-      console.error("Feedback submission failed:", error);
-    } finally {
-      setFeedbackSubmitting(false);
-    }
   };
 
   const handleResetEverything = () => {
@@ -141,7 +109,7 @@ export default function Settings() {
             </p>
             <Link href="/upgrade">
               <button data-testid="button-upgrade-settings"
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white text-sm font-bold shadow-[0_0_20px_hsl(var(--primary)/0.3)]">
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white text-sm font-bold shadow-[0_0_20px_hsl(var(--primary)/0.3)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)] transition-all">
                 <Zap size={14} /> Upgrade to Pro — ₹99/month
               </button>
             </Link>
@@ -176,7 +144,7 @@ export default function Settings() {
           {/* Share buttons */}
           <div className="flex gap-2">
             <a
-              href={`https://wa.me/?text=${encodeURIComponent(`Bro I found this app that's actually helping me get over my ex 💀 It tracks your no-contact streak and has this Ex Analysis thing that's kinda accurate. 7 days free if you use my link: ${shareUrl}`)}`}
+              href={`https://wa.me/?text=${encodeURIComponent(`Bro I found this app that's actually helping me get over my ex 💀 It tracks your no-contact streak and has this Ex Analysis thing that actually makes sense of your patterns. Give it a shot — totally free to start. ${shareUrl}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 py-2 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold text-center hover:bg-green-500/20 transition-colors"
@@ -184,7 +152,7 @@ export default function Settings() {
               Share on WhatsApp
             </a>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`found an app that's genuinely helping me heal after a breakup. tracks your no-contact streak, has an ex analysis, attachment style quiz, shadow work prompts.\n\nget 7 days free pro: ${shareUrl}`)}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`found an app that's genuinely helping me heal after a breakup. tracks your no-contact streak, has an ex analysis, shadow work tools & more. game changer fr ${shareUrl}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 py-2 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold text-center hover:bg-sky-500/20 transition-colors"
@@ -212,31 +180,16 @@ export default function Settings() {
             <h3 className="font-bold">Send Feedback</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-4">
-            Help us improve. What's working? What could be better?
+            Share your thoughts, ideas, and suggestions to help us improve ExDetox.
           </p>
           
-          {feedbackSent ? (
-            <div className="text-center py-3 px-4 rounded-xl bg-green-500/10 border border-green-500/30">
-              <p className="text-sm text-green-400 font-semibold">✓ Feedback received! Thank you 💜</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <textarea
-                value={feedbackText}
-                onChange={(e) => setFeedbackText(e.target.value)}
-                placeholder="Tell us what's on your mind..."
-                className="w-full bg-background/50 border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 outline-none focus:border-primary/50 transition-colors resize-none min-h-[100px]"
-              />
-              <button
-                onClick={handleSubmitFeedback}
-                disabled={!feedbackText.trim() || feedbackSubmitting}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-white text-sm font-bold disabled:opacity-50 hover:shadow-lg transition-all"
-              >
-                <Send size={14} />
-                {feedbackSubmitting ? "Sending..." : "Send Feedback"}
-              </button>
-            </div>
-          )}
+          <Link href="/feedback">
+            <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-white text-sm font-bold hover:shadow-lg hover:shadow-primary/30 transition-all">
+              <Send size={14} />
+              Open Feedback Form
+              <ExternalLink size={12} />
+            </button>
+          </Link>
         </motion.div>
 
         {/* Danger zone */}
