@@ -16,6 +16,7 @@ import ExAnalysis from "@/pages/ex-analysis";
 import ShadowWork from "@/pages/shadow-work";
 import AttachmentQuiz from "@/pages/attachment-quiz";
 import HealingCard from "@/pages/healing-card";
+import Feedback from "@/pages/feedback";
 import Auth from "@/pages/auth";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { useLocalStorage } from "@/hooks/use-local-storage";
@@ -92,6 +93,7 @@ function Router() {
       <Route path="/attachment-quiz" component={AttachmentQuiz} />
       <Route path="/healing-card" component={HealingCard} />
       <Route path="/settings" component={Settings} />
+      <Route path="/feedback" component={Feedback} />
       <Route component={NotFound} />
     </Switch>
   );

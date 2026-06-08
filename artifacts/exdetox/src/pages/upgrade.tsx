@@ -35,12 +35,22 @@ const PRO_FEATURES = [
 const PRICES = { monthly: 99, annual: 799 };
 
 export default function Upgrade() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { isPro, activate, plan } = useProStatus();
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual">("annual");
   const [step, setStep] = useState<"pricing" | "success">(isPro ? "success" : "pricing");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleBack = () => {
+    // If user came from dashboard (they're logged in), go back to dashboard
+    // Otherwise go to home
+    if (location === "/upgrade") {
+      setLocation(isPro ? "/dashboard" : "/");
+    } else {
+      window.history.back();
+    }
+  };
 
   const handlePay = async () => {
     setLoading(true);
@@ -122,7 +132,7 @@ export default function Upgrade() {
       <div className="flex items-center gap-3 p-5 pt-8">
         <button
           data-testid="button-back"
-          onClick={() => setLocation(isPro ? "/dashboard" : "/")}
+          onClick={handleBack}
           className="w-9 h-9 rounded-full bg-card/60 border border-border/50 flex items-center justify-center"
         >
           <ChevronLeft size={18} />
@@ -234,7 +244,7 @@ export default function Upgrade() {
               data-testid="button-pay-now"
               onClick={handlePay}
               disabled={loading}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-base shadow-[0_0_30px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_40px_hsl(var(--primary)/0.6)] disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-base shadow-[0_0_30px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_40px_hsl(var(--primary)/0.6)] transition-all disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { differenceInDays, differenceInHours, differenceInMinutes } from "date-fns";
-import { Flame, Clock, Star } from "lucide-react";
+import { Flame, Clock, Star, Sparkles } from "lucide-react";
 
 const LEVELS = [
   {
@@ -64,10 +64,56 @@ function getLevelForDays(days: number) {
   return LEVELS.find(l => days >= l.startDay && days <= l.endDay) ?? LEVELS[LEVELS.length - 1];
 }
 
+// Confetti particle component
+function Confetti() {
+  const particles = Array.from({ length: 30 }).map(() => ({
+    id: Math.random(),
+    left: Math.random() * 100,
+    delay: Math.random() * 0.3,
+    duration: 2 + Math.random() * 1,
+    scale: 0.5 + Math.random() * 1,
+  }));
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {particles.map(p => (
+        <motion.div
+          key={p.id}
+          initial={{ 
+            opacity: 1, 
+            y: 0, 
+            x: 0,
+            scale: p.scale,
+            rotate: 0
+          }}
+          animate={{ 
+            opacity: 0, 
+            y: 300, 
+            x: (Math.random() - 0.5) * 200,
+            rotate: Math.random() * 720
+          }}
+          transition={{ 
+            duration: p.duration, 
+            delay: p.delay,
+            ease: "easeOut"
+          }}
+          className="absolute w-2 h-2 rounded-full"
+          style={{
+            left: `${p.left}%`,
+            background: ['#a78bfa', '#f472b6', '#fbbf24', '#4ade80'][Math.floor(Math.random() * 4)]
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function StreakCounter({ ncDate }: { ncDate: string }) {
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [prevDays, setPrevDays] = useState(0);
 
   useEffect(() => {
     const update = () => {
@@ -76,6 +122,14 @@ export function StreakCounter({ ncDate }: { ncDate: string }) {
       const d = Math.max(0, differenceInDays(now, start));
       const h = Math.max(0, differenceInHours(now, start) % 24);
       const m = Math.max(0, differenceInMinutes(now, start) % 60);
+      
+      // Check if day increased and show celebration
+      if (d > prevDays && prevDays > 0) {
+        setShowCelebration(true);
+        setTimeout(() => setShowCelebration(false), 3000);
+      }
+      
+      setPrevDays(d);
       setDays(d);
       setHours(h);
       setMinutes(m);
@@ -83,7 +137,7 @@ export function StreakCounter({ ncDate }: { ncDate: string }) {
     update();
     const id = setInterval(update, 30000);
     return () => clearInterval(id);
-  }, [ncDate]);
+  }, [ncDate, prevDays]);
 
   const level = getLevelForDays(days);
   const levelIdx = LEVELS.indexOf(level);
@@ -96,6 +150,7 @@ export function StreakCounter({ ncDate }: { ncDate: string }) {
 
   const milestones = [7, 14, 30, 60, 90];
   const hitMilestone = milestones.includes(days);
+  const leveledUp = days > 0 && prevDays > 0 && days > prevDays && getLevelForDays(days) !== getLevelForDays(prevDays);
 
   return (
     <div className="flex flex-col gap-3">
@@ -105,37 +160,70 @@ export function StreakCounter({ ncDate }: { ncDate: string }) {
         animate={{ opacity: 1, scale: 1 }}
         className="relative w-full bg-card/50 border border-border/60 rounded-3xl p-6 backdrop-blur-sm overflow-hidden"
       >
+        {/* Celebration confetti */}
+        <AnimatePresence>
+          {(showCelebration || hitMilestone || leveledUp) && (
+            <Confetti />
+          )}
+        </AnimatePresence>
+
         {/* background glow */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-primary blur-3xl" />
         </div>
 
+        {/* Level up banner */}
+        <AnimatePresence>
+          {leveledUp && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="absolute top-3 left-3 bg-gradient-to-r from-primary to-accent text-white text-[11px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-[0_0_20px_hsl(var(--primary)/0.5)] flex items-center gap-1.5"
+            >
+              <Sparkles size={12} className="animate-spin" />
+              Level Up! 🚀
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Milestone banner */}
-        {hitMilestone && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute top-3 right-3 bg-accent text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-[0_0_12px_hsl(var(--accent))]"
-          >
-            {days}d Milestone 🎉
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {hitMilestone && !leveledUp && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="absolute top-3 right-3 bg-accent text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-[0_0_12px_hsl(var(--accent))]"
+            >
+              {days}d Milestone 🎉
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Header label */}
         <div className="flex items-center gap-2 mb-5">
-          <Flame size={14} className="text-primary" />
+          <motion.div
+            animate={showCelebration ? { scale: [1, 1.2, 1], rotate: [0, 10, 0] } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <Flame size={14} className="text-primary" />
+          </motion.div>
           <span className="text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">
             No Contact Streak
           </span>
         </div>
 
-        {/* Big number */}
+        {/* Big number with celebration animation */}
         <div className="flex items-baseline gap-3 mb-1">
           <motion.span
             key={days}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-[80px] leading-none font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground to-primary drop-shadow-[0_0_20px_hsl(var(--primary)/0.3)]"
+            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className={`text-[80px] leading-none font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground to-primary drop-shadow-[0_0_20px_hsl(var(--primary)/0.3)] ${
+              showCelebration ? 'animate-pulse' : ''
+            }`}
           >
             {days}
           </motion.span>
@@ -148,13 +236,17 @@ export function StreakCounter({ ncDate }: { ncDate: string }) {
           <span className="text-sm font-mono font-medium">{hours}h {minutes}m</span>
         </div>
 
-        {/* Level pill */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-card border border-border/80 text-sm font-bold backdrop-blur-sm`}>
+        {/* Level pill with glow on level up */}
+        <motion.div 
+          animate={leveledUp ? { scale: [1, 1.05, 1], boxShadow: ['0 0 0px hsl(var(--primary)/0)', '0 0 20px hsl(var(--primary)/0.5)', '0 0 0px hsl(var(--primary)/0)'] } : {}}
+          transition={{ duration: 0.8 }}
+          className="flex items-center gap-2 mb-2"
+        >
+          <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-card border border-border/80 text-sm font-bold backdrop-blur-sm ${leveledUp ? 'border-primary/50 bg-primary/10' : ''}`}>
             <Star size={12} className="text-primary fill-primary" />
             <span>{level.name}</span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Description */}
         <p className="text-sm text-muted-foreground mb-5 leading-relaxed">

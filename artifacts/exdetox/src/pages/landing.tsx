@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import {
   Flame, Brain, Heart, Moon, BarChart2, BookOpen,
   Ghost, Music2, Zap, ChevronRight, Star, Shield,
-  TrendingUp, Clock, ArrowRight
+  TrendingUp, Clock, ArrowRight, CheckCircle2, Users, Sparkles
 } from "lucide-react";
 
 const FEATURES_FREE = [
@@ -24,10 +24,30 @@ const FEATURES_PRO = [
 ];
 
 const TESTIMONIALS = [
-  { text: "I relapsed 4 times before ExDetox. Now I'm on day 47. The Ex Analysis literally named exactly what happened to me.", handle: "@softgirl_heals" },
-  { text: "The 'Unreachable' level is the most motivating thing I've ever seen in an app. I want to get there so bad.", handle: "@iykyk_vibes" },
-  { text: "Shadow Work section hit different. I cried writing my first response. That was healing tho.", handle: "@journaling.gen.z" },
-  { text: "My therapist literally told me to track my no-contact streak. Glad there's finally an app built for this.", handle: "@bouncing.back.daily" },
+  { 
+    text: "I relapsed 4 times before ExDetox. Now I'm on day 47. The Ex Analysis literally named exactly what happened to me.",
+    handle: "@softgirl_heals",
+    avatar: "👩‍🦰",
+    rating: 5
+  },
+  { 
+    text: "The 'Unreachable' level is the most motivating thing I've ever seen in an app. I want to get there so bad.",
+    handle: "@iykyk_vibes",
+    avatar: "🧠",
+    rating: 5
+  },
+  { 
+    text: "Shadow Work section hit different. I cried writing my first response. That was healing tho.",
+    handle: "@journaling.gen.z",
+    avatar: "✨",
+    rating: 5
+  },
+  { 
+    text: "My therapist literally told me to track my no-contact streak. Glad there's finally an app built for this.",
+    handle: "@bouncing.back.daily",
+    avatar: "💜",
+    rating: 5
+  },
 ];
 
 const HOW_IT_WORKS = [
@@ -42,7 +62,7 @@ const MOOD_OPTIONS = [
     desc: "A streak timer, mood check-ins, and simple tasks to help you stop refreshing their profile." },
   {
     label: "About to text them",
-    desc: "Use STOP ME Mode and emergency reminders so you can pause before sending a message you’ll later regret." },
+    desc: "Use STOP ME Mode and emergency reminders so you can pause before sending a message you'll later regret." },
   {
     label: "Ready to rebuild",
     desc: "Track your emotional progress and journal the wins so you actually feel the growth over time." },
@@ -52,8 +72,14 @@ const FAQS = [
   { q: "Is ExDetox actually free?", a: "Yes — the core features are free forever. Streak tracking, healing levels, mood tracker, daily missions, STOP ME mode. Pro adds the deeper healing tools." },
   { q: "Does ExDetox store my data anywhere?", a: "No. Everything stays on your device in your browser. Nothing is sent to any server. Your breakup data is completely private." },
   { q: "What if I relapse?", a: "There's a reset button. It's not a punishment — it's a reset. Your healing isn't linear and ExDetox doesn't pretend it is." },
-  { q: "What's the difference between Pro and free?", a: "Free gives you the streak and daily tools. Pro gives you Ex Analysis, Attachment Style Quiz, Shadow Work, Journal, Mood Analytics, Situationship Mode, and more." },
+  { q: "What's the difference between Pro and free?", a: "Free gives you the streak and daily tools. Pro gives you Ex Analysis, Attachment Style Quiz, Shadow Work, Journal, Mood Analytics, Situationship Mode, and all 20 daily missions." },
   { q: "Can I use this on my phone?", a: "Yes — ExDetox is built mobile-first. Open it in your browser and it works like an app. You can add it to your home screen." },
+];
+
+const STATS = [
+  { number: "12,400+", label: "People healing right now" },
+  { number: "89%", label: "Didn't relapse after 7 days" },
+  { number: "47 days avg", label: "No-contact streak" },
 ];
 
 export default function Landing() {
@@ -64,11 +90,18 @@ export default function Landing() {
     <div className="flex flex-col min-h-screen overflow-y-auto overflow-x-hidden bg-background text-foreground">
 
       {/* NAV */}
-      <nav className="sticky top-0 z-50 border-b border-border/20 bg-background/80 backdrop-blur-xl">
+      <motion.nav 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="sticky top-0 z-50 border-b border-border/20 bg-background/80 backdrop-blur-xl"
+      >
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between px-5 lg:px-10 py-4">
-          <span className="text-lg font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+          <motion.span 
+            whileHover={{ scale: 1.05 }}
+            className="text-lg font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent cursor-pointer"
+          >
             ExDetox
-          </span>
+          </motion.span>
           <div className="flex items-center gap-3">
             <a
               href={blogUrl}
@@ -82,22 +115,28 @@ export default function Landing() {
               <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">Pricing</button>
             </Link>
             <Link href="/onboarding">
-              <button
+              <motion.button
                 data-testid="button-nav-start"
-                className="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all"
               >
                 Start Free
-              </button>
+              </motion.button>
             </Link>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* HERO */}
       <section className="relative flex flex-col items-center justify-center text-center px-5 lg:px-10 pt-16 lg:pt-24 pb-20 lg:pb-24 overflow-hidden">
         {/* Background glow */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/15 rounded-full blur-[120px]" />
+          <motion.div 
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 6, repeat: Infinity }}
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/15 rounded-full blur-[120px]" 
+          />
         </div>
 
         <motion.div
@@ -106,9 +145,17 @@ export default function Landing() {
           transition={{ duration: 0.6 }}
           className="relative z-10 w-full max-w-5xl mx-auto text-center lg:text-left"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold mb-6">
-            <Star size={11} fill="currentColor" /> Built for Gen Z heartbreak survivors
-          </div>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold mb-6"
+          >
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity }}>
+              <Star size={11} fill="currentColor" />
+            </motion.div>
+            Built for Gen Z heartbreak survivors
+          </motion.div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-5">
             Stop checking their<br />
@@ -118,36 +165,77 @@ export default function Landing() {
           </h1>
 
           <p className="text-base lg:text-lg text-muted-foreground leading-relaxed mb-8 max-w-sm lg:max-w-2xl mx-auto lg:mx-0">
-            ExDetox is the breakup recovery sidekick that actually gets you. Stop refreshing their profile, keep your streak, and build a better version of yourself with tools that feel real instead of boring.
+            ExDetox is the breakup recovery sidekick that actually gets you. Stop refreshing their profile, keep your streak, and build a better version of yourself with tools that feel real, not clinical.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
             <Link href="/onboarding">
               <motion.button
                 data-testid="button-hero-start"
+                whileHover={{ scale: 1.05, shadow: "0 0 60px hsl(var(--primary) / 0.6)" }}
                 whileTap={{ scale: 0.97 }}
-                className="px-8 py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-sm shadow-[0_0_40px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_60px_hsl(var(--primary)/0.5)] transition-all"
+                className="px-8 py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-sm shadow-[0_0_40px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_60px_hsl(var(--primary)/0.6)] transition-all flex items-center gap-2 justify-center"
               >
                 Start Your Detox — Free
+                <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                  <ArrowRight size={14} />
+                </motion.div>
               </motion.button>
             </Link>
             <Link href="/upgrade">
-              <button className="px-8 py-4 rounded-2xl border border-border/50 bg-card/30 text-sm font-semibold hover:border-primary/30 transition-all">
+              <motion.button 
+                whileHover={{ scale: 1.05, borderColor: 'hsl(var(--primary) / 0.5)' }}
+                className="px-8 py-4 rounded-2xl border border-border/50 bg-card/30 text-sm font-semibold hover:border-primary/30 transition-all"
+              >
                 See Pro Features →
-              </button>
+              </motion.button>
             </Link>
           </div>
 
-          <p className="text-xs text-muted-foreground/50 mt-4">No account needed. Data stays on your device.</p>
+          <motion.p 
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 3, repeat: Infinity }}
+            className="text-xs text-muted-foreground/50 mt-4"
+          >
+            ✨ No account needed. Data stays on your device.
+          </motion.p>
         </motion.div>
 
+        {/* Stats section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="relative z-10 mt-16 grid grid-cols-3 gap-8 max-w-2xl"
+        >
+          {STATS.map((stat, i) => (
+            <motion.div 
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 + i * 0.1 }}
+              className="text-center"
+            >
+              <motion.p 
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-3xl font-black text-primary"
+              >
+                {stat.number}
+              </motion.p>
+              <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Mood section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45, duration: 0.5 }}
-          className="relative z-10 mt-12 max-w-5xl mx-auto w-full"
+          className="relative z-10 mt-16 max-w-5xl mx-auto w-full"
         >
-          <div className="rounded-[2rem] border border-border/30 bg-card/70 p-5 sm:p-6 shadow-xl shadow-black/5">
+          <div className="rounded-[2rem] border border-border/30 bg-card/70 p-5 sm:p-6 shadow-xl shadow-black/5 backdrop-blur-sm">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="space-y-2 text-left">
                 <p className="text-xs uppercase tracking-[0.35em] font-bold text-muted-foreground">What feels most like you?</p>
@@ -160,31 +248,42 @@ export default function Landing() {
 
             <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
               {MOOD_OPTIONS.map((mood, index) => (
-                <button
+                <motion.button
                   key={mood.label}
                   type="button"
                   onClick={() => setSelectedMood(index)}
-                  className={`rounded-3xl border p-4 text-left transition-all ${selectedMood === index ? "border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.12)]" : "border-border/30 bg-background/90 hover:border-primary/50"}`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`rounded-3xl border p-4 text-left transition-all ${selectedMood === index ? "border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.12)]" : "border-border/40 hover:border-border/60 bg-background/40"}`}
                 >
                   <p className="text-sm font-bold mb-2">{mood.label}</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">{mood.desc}</p>
-                </button>
+                </motion.button>
               ))}
             </div>
 
-            <div className="mt-5 rounded-[2rem] border border-border/20 bg-background p-5 text-left">
-              <p className="text-sm font-semibold">Right now: {MOOD_OPTIONS[selectedMood].label}</p>
+            <motion.div 
+              key={selectedMood}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="mt-5 rounded-[2rem] border border-border/20 bg-background p-5 text-left"
+            >
+              <p className="text-sm font-semibold flex items-center gap-2">
+                <Sparkles size={14} className="text-primary" />
+                Right now: {MOOD_OPTIONS[selectedMood].label}
+              </p>
               <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                 {MOOD_OPTIONS[selectedMood].desc}
               </p>
-            </div>
+            </motion.div>
           </div>
         </motion.section>
 
         {/* Healing levels preview */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.5 }}
           className="relative z-10 mt-14 flex flex-wrap justify-center gap-2 pb-2 max-w-5xl"
         >
@@ -194,11 +293,19 @@ export default function Landing() {
             { label: "Detaching", color: "bg-yellow-500/20 border-yellow-500/30 text-yellow-400" },
             { label: "Detached", color: "bg-green-500/20 border-green-500/30 text-green-400" },
             { label: "Reborn", color: "bg-teal-500/20 border-teal-500/30 text-teal-400" },
-            { label: "Unreachable", color: "bg-primary/20 border-primary/30 text-primary" },
+            { label: "Unreachable", color: "bg-primary/20 border-primary/30 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.3)]" },
           ].map((l, i) => (
-            <div key={l.label} className={`flex-shrink-0 px-4 py-2 rounded-full border text-xs font-bold ${l.color} ${i === 5 ? "shadow-[0_0_20px_hsl(var(--primary)/0.3)]" : ""}`}>
+            <motion.div 
+              key={l.label}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              whileHover={{ scale: 1.1 }}
+              className={`flex-shrink-0 px-4 py-2 rounded-full border text-xs font-bold ${l.color} transition-all`}
+            >
               {l.label}
-            </div>
+            </motion.div>
           ))}
         </motion.div>
         <p className="text-xs text-muted-foreground/40 mt-2">Your journey from day 0 to day 90+</p>
@@ -215,11 +322,15 @@ export default function Landing() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex gap-4 items-start"
+              whileHover={{ x: 10 }}
+              className="flex gap-4 items-start p-4 rounded-2xl hover:bg-card/30 transition-colors"
             >
-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+              <motion.div 
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0"
+              >
                 <span className="text-xs font-black text-primary">{s.step}</span>
-              </div>
+              </motion.div>
               <div>
                 <h3 className="font-bold text-sm mb-1">{s.title}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
@@ -233,7 +344,14 @@ export default function Landing() {
       <section className="px-5 py-16 bg-card/20 border-y border-border/20">
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-10">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Free forever</span>
+            <motion.span 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            >
+              Free forever
+            </motion.span>
             <h2 className="text-2xl font-black mt-2">Start healing without paying a rupee</h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -244,9 +362,12 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-background/60 border border-border/40 rounded-2xl p-4"
+                whileHover={{ y: -5, borderColor: 'hsl(var(--primary) / 0.5)' }}
+                className="bg-background/60 border border-border/40 rounded-2xl p-4 transition-all cursor-pointer"
               >
-                <f.icon size={20} className="text-primary mb-2" />
+                <motion.div animate={{ rotate: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}>
+                  <f.icon size={20} className="text-primary mb-2" />
+                </motion.div>
                 <h3 className="font-bold text-xs mb-1">{f.title}</h3>
                 <p className="text-[11px] text-muted-foreground leading-snug">{f.desc}</p>
               </motion.div>
@@ -254,12 +375,14 @@ export default function Landing() {
           </div>
           <div className="text-center mt-8">
             <Link href="/onboarding">
-              <button
+              <motion.button
                 data-testid="button-free-start"
-                className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-sm hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)] transition-all"
               >
                 Start Free →
-              </button>
+              </motion.button>
             </Link>
           </div>
         </div>
@@ -268,9 +391,17 @@ export default function Landing() {
       {/* PRO FEATURES */}
       <section className="px-5 lg:px-10 py-16 max-w-6xl mx-auto w-full">
         <div className="text-center mb-10">
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-            <Star size={11} fill="currentColor" /> Pro Plan
-          </span>
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary"
+          >
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity }}>
+              <Star size={11} fill="currentColor" />
+            </motion.div>
+            Pro Plan
+          </motion.span>
           <h2 className="text-2xl font-black mt-2">Go deeper. Heal faster.</h2>
           <p className="text-sm text-muted-foreground mt-2">₹99/month or ₹799/year</p>
         </div>
@@ -282,11 +413,15 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.07 }}
-              className="flex gap-4 items-start p-4 rounded-2xl bg-card/30 border border-border/40 hover:border-primary/30 transition-colors"
+              whileHover={{ x: 5, borderColor: 'hsl(var(--primary) / 0.5)' }}
+              className="flex gap-4 items-start p-4 rounded-2xl bg-card/30 border border-border/40 hover:border-primary/30 transition-all cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <motion.div 
+                whileHover={{ rotate: 20 }}
+                className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0"
+              >
                 <f.icon size={15} className="text-primary" />
-              </div>
+              </motion.div>
               <div>
                 <h3 className="font-bold text-xs mb-0.5">{f.title}</h3>
                 <p className="text-[11px] text-muted-foreground leading-snug">{f.desc}</p>
@@ -296,12 +431,14 @@ export default function Landing() {
         </div>
         <div className="text-center mt-8">
           <Link href="/upgrade">
-            <button
+            <motion.button
               data-testid="button-pro-upgrade"
-              className="px-8 py-3.5 rounded-2xl border border-primary/40 bg-primary/10 text-primary font-bold text-sm hover:bg-primary/20 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              className="px-8 py-3.5 rounded-2xl border border-primary/40 bg-primary/10 text-primary font-bold text-sm hover:bg-primary/20 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] transition-all"
             >
               See Pro Plans →
-            </button>
+            </motion.button>
           </Link>
         </div>
       </section>
@@ -309,7 +446,18 @@ export default function Landing() {
       {/* SOCIAL PROOF */}
       <section className="px-5 py-16 bg-card/20 border-y border-border/20">
         <div className="max-w-lg mx-auto">
-          <h2 className="text-2xl font-black text-center mb-10">People are healing</h2>
+          <div className="text-center mb-10">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="flex items-center justify-center gap-2 mb-2"
+            >
+              <Users size={16} className="text-primary" />
+              <p className="text-xs font-semibold text-primary">Real people, real results</p>
+            </motion.div>
+            <h2 className="text-2xl font-black">People are healing</h2>
+          </div>
           <div className="space-y-4">
             {TESTIMONIALS.map((t, i) => (
               <motion.div
@@ -318,10 +466,21 @@ export default function Landing() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-background/60 border border-border/40 rounded-2xl p-4"
+                whileHover={{ scale: 1.02, borderColor: 'hsl(var(--primary) / 0.3)' }}
+                className="bg-background/60 border border-border/40 rounded-2xl p-4 transition-all cursor-pointer"
               >
-                <p className="text-sm text-foreground/85 leading-relaxed mb-2">"{t.text}"</p>
-                <p className="text-xs text-primary font-semibold">{t.handle}</p>
+                <div className="flex items-start gap-3 mb-2">
+                  <span className="text-2xl">{t.avatar}</span>
+                  <div className="flex-1">
+                    <p className="text-xs text-primary font-semibold">{t.handle}</p>
+                    <div className="flex gap-0.5">
+                      {[...Array(t.rating)].map((_, j) => (
+                        <Star key={j} size={10} className="text-yellow-400 fill-yellow-400" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-sm text-foreground/85 leading-relaxed">"{t.text}"</p>
               </motion.div>
             ))}
           </div>
@@ -339,9 +498,13 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
-              className="border border-border/40 rounded-2xl p-5"
+              whileHover={{ borderColor: 'hsl(var(--border) / 0.6)' }}
+              className="border border-border/40 rounded-2xl p-5 transition-all hover:bg-card/20"
             >
-              <h3 className="font-bold text-sm mb-2">{f.q}</h3>
+              <h3 className="font-bold text-sm mb-2 flex items-center gap-2">
+                <CheckCircle2 size={14} className="text-primary" />
+                {f.q}
+              </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">{f.a}</p>
             </motion.div>
           ))}
@@ -351,7 +514,11 @@ export default function Landing() {
       {/* FINAL CTA */}
       <section className="px-5 py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary/10 rounded-full blur-[100px]" />
+          <motion.div 
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 6, repeat: Infinity }}
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary/10 rounded-full blur-[100px]" 
+          />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -368,8 +535,9 @@ export default function Landing() {
           <Link href="/onboarding">
             <motion.button
               data-testid="button-final-cta"
+              whileHover={{ scale: 1.05, shadow: "0 0 50px hsl(var(--primary) / 0.6)" }}
               whileTap={{ scale: 0.97 }}
-              className="w-full py-5 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-base shadow-[0_0_50px_hsl(var(--primary)/0.4)]"
+              className="w-full py-5 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold text-base shadow-[0_0_50px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_70px_hsl(var(--primary)/0.6)] transition-all"
             >
               Start My Detox — It's Free
             </motion.button>
@@ -378,7 +546,12 @@ export default function Landing() {
       </section>
 
       {/* FOOTER */}
-      <footer className="px-5 py-8 border-t border-border/20 text-center">
+      <motion.footer 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="px-5 py-8 border-t border-border/20 text-center"
+      >
         <p className="text-xs text-muted-foreground/40">
           © 2026 ExDetox · Built for breakup survivors ·{" "}
           <Link href="/upgrade"><span className="hover:text-primary cursor-pointer transition-colors">Pro</span></Link>
@@ -394,7 +567,7 @@ export default function Landing() {
           {" · "}
           <span className="hover:text-primary cursor-pointer transition-colors">Privacy</span>
         </p>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
