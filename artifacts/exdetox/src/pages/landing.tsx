@@ -58,6 +58,7 @@ const FAQS = [
 
 export default function Landing() {
   const [selectedMood, setSelectedMood] = useState(0);
+  const blogUrl = "https://blog.exdetox.live";
 
   return (
     <div className="flex flex-col min-h-screen overflow-y-auto overflow-x-hidden bg-background text-foreground">
@@ -69,6 +70,14 @@ export default function Landing() {
             ExDetox
           </span>
           <div className="flex items-center gap-3">
+            <a
+              href={blogUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Blog
+            </a>
             <Link href="/upgrade">
               <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">Pricing</button>
             </Link>
@@ -373,6 +382,15 @@ export default function Landing() {
         <p className="text-xs text-muted-foreground/40">
           © 2026 ExDetox · Built for breakup survivors ·{" "}
           <Link href="/upgrade"><span className="hover:text-primary cursor-pointer transition-colors">Pro</span></Link>
+          {" · "}
+          <a
+            href={blogUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-primary transition-colors"
+          >
+            Blog
+          </a>
           {" · "}
           <span className="hover:text-primary cursor-pointer transition-colors">Privacy</span>
         </p>

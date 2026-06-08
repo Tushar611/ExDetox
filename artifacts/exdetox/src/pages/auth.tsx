@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { signInWithEmail, signUpWithEmail, resetPassword } from "@/lib/auth";
+import { signInWithEmail, signUpWithEmail, resetPassword, verifyResetCode, confirmNewPassword } from "@/lib/auth";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/auth-context";
 import { firebaseConfigured } from "@/lib/firebase";
@@ -48,11 +48,38 @@ export default function Auth() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotSent, setForgotSent] = useState(false);
   const [, setLocation] = useLocation();
+  
+  // Password reset flow
+  const [resetCode, setResetCode] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showResetForm, setShowResetForm] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
     if (user) setLocation("/dashboard");
   }, [user, setLocation]);
+
+  // Check for password reset code in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("oobCode");
+    
+    if (code) {
+      setResetCode(code);
+      // Verify the code is valid
+      verifyResetCode(code)
+        .then((email) => {
+          setResetEmail(email);
+          setShowResetForm(true);
+        })
+        .catch(() => {
+          setError("This password reset link has expired. Request a new one.");
+          setShowResetForm(false);
+        });
+    }
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -106,6 +133,40 @@ export default function Auth() {
       await resetPassword(forgotEmail);
       setForgotSent(true);
       setTimeout(() => setShowForgot(false), 3000);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmNewPassword = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!newPassword || !confirmPassword) {
+      setError("Please enter and confirm your new password.");
+      setLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Password should be at least 6 characters.");
+      setLoading(false);
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords don't match.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await confirmNewPassword(resetCode, newPassword);
+      setError("");
+      setTimeout(() => setLocation("/auth"), 1500);
     } catch (error: unknown) {
       setError(getErrorMessage(error));
     } finally {
